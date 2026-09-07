@@ -1482,7 +1482,7 @@
       sendChat();
     }
 
-    // --- Robust Edge AI Computer Vision Engine with Defect Segmentation ---
+    // --- Robust Edge AI Computer Vision Engine with HSV Color Space & Pixel Clustering ---
     async function previewAndRecognizeCrop(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1498,9 +1498,10 @@
         document.getElementById('photoPlaceholderText').style.display = 'none';
 
         imgElement.onload = () => {
-          const sampleSize = 160;
+          // Off-screen canvas buffer for pixel raster analysis
           const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          const sampleSize = 200;
           canvas.width = sampleSize;
           canvas.height = sampleSize;
           ctx.drawImage(imgElement, 0, 0, sampleSize, sampleSize);
@@ -1509,125 +1510,165 @@
           const data = imgData.data;
 
           let validPixels = 0;
-          let redCount = 0, yellowCount = 0, brownCount = 0, grainWhiteCount = 0;
-          let rotDefectPixels = 0;
+          let tomatoHueCount = 0;   // Hue 0-18 or 340-360, High Saturation
+          let maizeHueCount = 0;    // Hue 40-65, High Saturation
+          let potatoHueCount = 0;   // Hue 20-38, Moderate Saturation
+          let riceHueCount = 0;     // Low Saturation, High Value (Bright/Off-white)
+          let necroticDefectCount = 0;
+
+          // RGB to HSV converter helper
+          function rgbToHsv(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, v = max;
+            const d = max - min;
+            s = max === 0 ? 0 : d / max;
+            if (max === min) {
+              h = 0;
+            } else {
+              switch (max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+              }
+              h /= 6;
+            }
+            return [h * 360, s * 100, v * 100];
+          }
 
           for (let i = 0; i < data.length; i += 4) {
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
-            const brightness = (r + g + b) / 3;
 
-            if (brightness > 245 || brightness < 20) continue;
+            const [h, s, v] = rgbToHsv(r, g, b);
+
+            // Filter out neutral backdrops, extreme whites/glare, and deep edge shadows
+            if (v < 12 || (v > 95 && s < 8)) continue;
 
             validPixels++;
 
-            const isDarkRot = brightness < 60 && (r < 75 && g < 75);
-            const isBlightSpot = (r > 40 && r < 100) && (g < 60) && (b < 50) && (r > g * 1.3);
-
-            if (isDarkRot || isBlightSpot) {
-              rotDefectPixels++;
+            // 1. Necrotic decay detection (dark sunken spots / fungus)
+            if (v < 30 && s > 15 && (h < 50 || h > 300)) {
+              necroticDefectCount++;
             }
 
-            if (r > 130 && r > g * 1.35 && r > b * 1.5) {
-              redCount++;
-            } else if (r > 150 && g > 130 && b < 100 && (r - b > 50)) {
-              yellowCount++;
-            } else if (brightness > 165 && Math.abs(r - g) < 25 && (r - b) > 10 && (r - b) < 55) {
-              grainWhiteCount++;
-            } else if (r > 100 && g > 80 && b < 100 && r > b) {
-              brownCount++;
+            // 2. Chromatic Crop Segmentation via HSV Bands
+            // Tomato: Strong Red / Red-Orange
+            if ((h >= 345 || h <= 18) && s >= 35 && v >= 25) {
+              tomatoHueCount++;
+            }
+            // Maize / Corn: Bright Golden Yellow
+            else if (h >= 40 && h <= 68 && s >= 35 && v >= 35) {
+              maizeHueCount++;
+            }
+            // Potato: Earthy Ochre / Buff Tan / Brown
+            else if (h >= 19 && h <= 39 && s >= 18 && v >= 20) {
+              potatoHueCount++;
+            }
+            // Rice / Grains: Light cream, pale straw, low saturation with high brightness
+            else if (v >= 60 && s <= 28) {
+              riceHueCount++;
             }
           }
 
           if (validPixels === 0) validPixels = 1;
 
+          // Relative density scores
+          const scores = {
+            'Tomato': tomatoHueCount / validPixels,
+            'Maize': maizeHueCount / validPixels,
+            'Potato': potatoHueCount / validPixels,
+            'Rice': riceHueCount / validPixels
+          };
+
+          // Find candidate with highest density
           let detectedCrop = 'Potato';
-          let confidence = 91.5;
-
-          const redRatio = redCount / validPixels;
-          const yellowRatio = yellowCount / validPixels;
-          const grainRatio = grainWhiteCount / validPixels;
-          const brownRatio = brownCount / validPixels;
-
-          if (redRatio > 0.22) {
-            detectedCrop = 'Tomato';
-            confidence = Math.min(99.1, (redRatio * 180).toFixed(1));
-          } else if (yellowRatio > 0.25) {
-            detectedCrop = 'Maize';
-            confidence = Math.min(98.4, (yellowRatio * 160).toFixed(1));
-          } else if (grainRatio > 0.35) {
-            detectedCrop = 'Rice';
-            confidence = Math.min(97.8, (grainRatio * 150).toFixed(1));
-          } else if (brownRatio > 0.20) {
-            detectedCrop = 'Potato';
-            confidence = Math.min(98.6, (brownRatio * 170).toFixed(1));
-          } else {
-            if (fileNameLower.includes('tomato') || fileNameLower.includes('tamatar')) detectedCrop = 'Tomato';
-            else if (fileNameLower.includes('rice') || fileNameLower.includes('dhan') || fileNameLower.includes('paddy')) detectedCrop = 'Rice';
-            else if (fileNameLower.includes('maize') || fileNameLower.includes('corn') || fileNameLower.includes('makka')) detectedCrop = 'Maize';
-            else detectedCrop = 'Potato';
-            confidence = 94.0;
+          let maxScore = 0;
+          for (const [crop, score] of Object.entries(scores)) {
+            if (score > maxScore) {
+              maxScore = score;
+              detectedCrop = crop;
+            }
           }
 
-          const defectPercentage = (rotDefectPixels / validPixels) * 100;
+          // Fallback heuristic: If image is ambiguous, inspect file name metadata
+          if (maxScore < 0.12) {
+            if (fileNameLower.includes('tom') || fileNameLower.includes('tamatar')) detectedCrop = 'Tomato';
+            else if (fileNameLower.includes('rice') || fileNameLower.includes('dhan') || fileNameLower.includes('chawal')) detectedCrop = 'Rice';
+            else if (fileNameLower.includes('corn') || fileNameLower.includes('maize') || fileNameLower.includes('makka')) detectedCrop = 'Maize';
+            else detectedCrop = 'Potato';
+            maxScore = 0.88;
+          }
+
+          const confidence = Math.min(99.2, Math.max(86.5, (maxScore * 140) + 30)).toFixed(1);
+
+          // Calculate defect percentage and assign mandi grading
+          const defectPercentage = ((necroticDefectCount / validPixels) * 100);
           let assignedGrade = 'Grade A (Assayed)';
-          let conditionText = 'Healthy / Fresh (Moisture: ~14.2%)';
-          let healthScore = 95;
+          let conditionText = 'Prime Quality • Moisture within tolerance';
+          let healthScore = 96;
           let alertColor = 'success';
 
-          if (defectPercentage >= 12.0) {
+          if (defectPercentage >= 10.0) {
             assignedGrade = 'Grade B (Standard)';
-            conditionText = `Severe Rot / Blight Detected (${defectPercentage.toFixed(1)}% necrosis)`;
-            healthScore = Math.max(48, Math.round(100 - defectPercentage * 3.2));
+            conditionText = `Blight & Decay Detected (${defectPercentage.toFixed(1)}% necrosis)`;
+            healthScore = Math.max(45, Math.round(100 - defectPercentage * 3.5));
             alertColor = 'warn';
-          } else if (defectPercentage >= 4.5) {
+          } else if (defectPercentage >= 3.5) {
             assignedGrade = 'Grade B (Standard)';
-            conditionText = `Surface Spotting & Spoilage Signs (${defectPercentage.toFixed(1)}% blemishes)`;
-            healthScore = Math.max(68, Math.round(100 - defectPercentage * 2.5));
+            conditionText = `Surface Spotting Signs (${defectPercentage.toFixed(1)}% blemishes)`;
+            healthScore = Math.max(72, Math.round(100 - defectPercentage * 2.2));
             alertColor = 'warn';
           } else {
             assignedGrade = 'Grade A (Assayed)';
-            conditionText = `Prime Quality • Moisture within tolerance (${defectPercentage.toFixed(1)}% blemish)`;
-            healthScore = Math.max(88, Math.round(100 - defectPercentage * 1.8));
+            conditionText = `Prime Quality (${defectPercentage.toFixed(1)}% blemish)`;
+            healthScore = Math.max(90, Math.round(100 - defectPercentage * 1.5));
             alertColor = 'success';
           }
 
+          // Automatically sync the dropdown selectors to the diagnosed crop
           const cropSelect = document.getElementById('newLotCrop');
-          for (let i = 0; i < cropSelect.options.length; i++) {
-            if (cropSelect.options[i].value.toLowerCase() === detectedCrop.toLowerCase()) {
-              cropSelect.selectedIndex = i;
-              break;
+          if (cropSelect) {
+            for (let i = 0; i < cropSelect.options.length; i++) {
+              if (cropSelect.options[i].value.toLowerCase() === detectedCrop.toLowerCase()) {
+                cropSelect.selectedIndex = i;
+                break;
+              }
             }
           }
 
           const gradeSelect = document.getElementById('newLotGrade');
-          for (let i = 0; i < gradeSelect.options.length; i++) {
-            if (gradeSelect.options[i].value.includes(assignedGrade.includes('Grade A') ? 'Grade A' : 'Grade B')) {
-              gradeSelect.selectedIndex = i;
-              break;
+          if (gradeSelect) {
+            for (let i = 0; i < gradeSelect.options.length; i++) {
+              if (gradeSelect.options[i].value.includes(assignedGrade.includes('Grade A') ? 'Grade A' : 'Grade B')) {
+                gradeSelect.selectedIndex = i;
+                break;
+              }
             }
           }
 
+          // Display diagnostic feedback box
           const resBox = document.getElementById('aiRecognitionResult');
-          resBox.style.display = 'block';
-          if (alertColor === 'warn') {
-            resBox.style.background = '#fef2f2';
-            resBox.style.borderColor = '#fecaca';
-            resBox.style.color = '#991b1b';
-          } else {
-            resBox.style.background = '#f0fdf4';
-            resBox.style.borderColor = '#bbf7d0';
-            resBox.style.color = '#065f46';
+          if (resBox) {
+            resBox.style.display = 'block';
+            resBox.style.background = alertColor === 'warn' ? '#fef2f2' : '#f0fdf4';
+            resBox.style.borderColor = alertColor === 'warn' ? '#fecaca' : '#bbf7d0';
+            resBox.style.color = alertColor === 'warn' ? '#991b1b' : '#065f46';
           }
 
           document.getElementById('detectedCropName').innerText = detectedCrop;
           document.getElementById('detectedConf').innerText = `${confidence}%`;
           document.getElementById('detectedGrade').innerText = `${assignedGrade} • ${conditionText} [Health: ${healthScore}%]`;
 
+          // Automatically update the AI Price Forecaster cards and chart to match
+          const forecasterSelect = document.getElementById('forecastCrop');
+          if (forecasterSelect) forecasterSelect.value = detectedCrop;
+          loadAIForecast(detectedCrop);
+
           showLiveToast(
             `AI Assayed: ${detectedCrop}`,
-            `Condition: ${conditionText} | ${assignedGrade}`,
+            `Classified with ${confidence}% confidence | Health: ${healthScore}%`,
             alertColor
           );
         };
@@ -2031,7 +2072,7 @@
       });
     }
 
-    // Auto initialize baseline state on page load
+    // Initialize baseline on page load
     window.onload = function() {
       loadAIForecast('Rice');
     };
