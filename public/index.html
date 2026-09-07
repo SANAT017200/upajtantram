@@ -368,7 +368,7 @@
         <div class="form-group">
           <label>10-Digit Mobile Number</label>
           <div style="display:flex; gap:0.5rem;">
-            <input id="loginPhone" type="tel" pattern="[0-9]{10}" placeholder="9814011223" required />
+            <input id="loginPhone" type="tel" pattern="[0-9]{10}" placeholder="9883860358" required />
             <button type="button" class="btn-primary" style="width:auto; white-space:nowrap; padding:0 1.2rem;" onclick="requestOtp('login')">
               Get OTP
             </button>
@@ -393,12 +393,12 @@
 
         <div class="form-group">
           <label>Full Name / Enterprise Name</label>
-          <input id="regName" required placeholder="e.g. Gurpreet Singh" />
+          <input id="regName" required placeholder="e.g. Ramesh Chandra Ghosh" />
         </div>
 
         <div class="form-group">
           <label>Mobile Number</label>
-          <input id="regPhone" type="tel" pattern="[0-9]{10}" required placeholder="9814011223" />
+          <input id="regPhone" type="tel" pattern="[0-9]{10}" required placeholder="9883860358" />
         </div>
 
         <div class="form-group">
@@ -415,8 +415,8 @@
             <label>State</label>
             <select id="regState" onchange="populateDistricts()" required>
               <option value="">-- Select State --</option>
+              <option value="West Bengal" selected>West Bengal</option>
               <option value="Punjab">Punjab</option>
-              <option value="West Bengal">West Bengal</option>
               <option value="Bihar">Bihar</option>
               <option value="Uttar Pradesh">Uttar Pradesh</option>
             </select>
@@ -424,7 +424,8 @@
           <div class="form-group">
             <label>District</label>
             <select id="regDistrict" required>
-              <option value="">-- Select State First --</option>
+              <option value="Jalpaiguri" selected>Jalpaiguri</option>
+              <option value="Darjeeling">Darjeeling</option>
             </select>
           </div>
         </div>
@@ -477,29 +478,30 @@
         <div>
           <div style="font-size:0.75rem; opacity:0.8; text-transform:uppercase; font-weight:700;">Verified Digital Identity</div>
           <h2 style="margin:0.1rem 0; font-size:1.35rem;" id="bannerUserName">Farmer Name</h2>
-          <span style="font-size:0.85rem; opacity:0.9;" id="bannerUserLocation"><i class="fa-solid fa-location-dot"></i> Amritsar, Punjab</span>
+          <span style="font-size:0.85rem; opacity:0.9;" id="bannerUserLocation"><i class="fa-solid fa-location-dot"></i> Jalpaiguri, West Bengal</span>
         </div>
         <div style="text-align:right;">
           <span style="font-size:0.75rem; opacity:0.8; display:block; font-weight:700; margin-bottom:0.3rem;">UPAJTANTRAM CREDENTIAL ID</span>
-          <span class="id-code-pill" id="bannerUserId">FARM-PB-0000</span>
+          <span class="id-code-pill" id="bannerUserId">FARM-WB-0000</span>
         </div>
       </div>
 
       <!-- TAB 1: MAIN TRADE, VISION & ANALYTICS -->
       <div id="marketplaceTab">
         
+        <!-- Live Weather & Spoilage Advisory Banner -->
         <div class="card" style="background:#fffbeb; border:1px solid #fef3c7; border-left:6px solid var(--accent-orange);">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <h4 style="color:#b45309; margin-bottom:0.2rem;"><i class="fa-solid fa-cloud-bolt"></i> Live Weather & Spoilage Advisory (<span id="weatherDistrict">Amritsar</span>)</h4>
+              <h4 style="color:#b45309; margin-bottom:0.2rem;"><i class="fa-solid fa-cloud-bolt"></i> Live Weather & Spoilage Advisory (<span id="weatherDistrict">Jalpaiguri</span>)</h4>
               <p style="font-size:0.88rem; color:#92400e;" id="weatherAdviceText">Loading advisory...</p>
             </div>
             <span class="badge badge-alert" id="weatherRiskBadge">HIGH RISK</span>
           </div>
           <div style="margin-top:0.6rem; font-size:0.82rem; color:#78350f; display:flex; gap:1.2rem;">
-            <span><i class="fa-solid fa-temperature-half"></i> Temp: <strong id="weatherTemp">28°C</strong></span>
-            <span><i class="fa-solid fa-droplet"></i> Humidity: <strong id="weatherHum">82%</strong></span>
-            <span><i class="fa-solid fa-umbrella"></i> Rain Chance: <strong id="weatherRain">70%</strong></span>
+            <span><i class="fa-solid fa-temperature-half"></i> Temp: <strong id="weatherTemp">29°C</strong></span>
+            <span><i class="fa-solid fa-droplet"></i> Humidity: <strong id="weatherHum">86%</strong></span>
+            <span><i class="fa-solid fa-umbrella"></i> Rain Chance: <strong id="weatherRain">75%</strong></span>
           </div>
         </div>
 
@@ -680,13 +682,13 @@
               <label>District Location</label>
               <select id="radarDistrict" onchange="runRadarScan()">
                 <option value="All">All Districts</option>
-                <optgroup label="Punjab">
-                  <option value="Amritsar" selected>Amritsar</option>
-                  <option value="Ludhiana">Ludhiana</option>
-                </optgroup>
                 <optgroup label="West Bengal">
-                  <option value="Jalpaiguri">Jalpaiguri</option>
+                  <option value="Jalpaiguri" selected>Jalpaiguri</option>
                   <option value="Darjeeling">Darjeeling / Siliguri</option>
+                </optgroup>
+                <optgroup label="Punjab">
+                  <option value="Amritsar">Amritsar</option>
+                  <option value="Ludhiana">Ludhiana</option>
                 </optgroup>
                 <optgroup label="Bihar">
                   <option value="Patna">Patna</option>
@@ -774,11 +776,11 @@
           <form onsubmit="handleBookTruck(event)" class="grid-2">
             <div class="form-group">
               <label>Pickup Location (District)</label>
-              <input type="text" id="pickupDist" value="Amritsar" required />
+              <input type="text" id="pickupDist" value="Jalpaiguri" required />
             </div>
             <div class="form-group">
               <label>Drop Mandi / Warehouse</label>
-              <input type="text" id="dropMandi" value="Amritsar Grain Market Yard" required />
+              <input type="text" id="dropMandi" value="Siliguri Wholesale Yard" required />
             </div>
             <div class="form-group">
               <label>Vehicle Capacity</label>
@@ -790,10 +792,10 @@
             </div>
             <div class="form-group">
               <label>Estimated Distance (KM)</label>
-              <input type="number" id="estKm" value="35" onchange="updateEstimatedFreight()" required />
+              <input type="number" id="estKm" value="48" onchange="updateEstimatedFreight()" required />
             </div>
             <div style="grid-column: span 2; background:#f8fafc; padding:0.8rem; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-              <div>Estimated Freight: <strong id="estFreightDisplay" style="color:#059669; font-size:1.1rem;">₹1,200</strong></div>
+              <div>Estimated Freight: <strong id="estFreightDisplay" style="color:#059669; font-size:1.1rem;">₹1,460</strong></div>
               <button type="submit" class="btn-primary" style="width:auto;"><i class="fa-solid fa-check"></i> Confirm Truck Dispatch</button>
             </div>
           </form>
@@ -809,8 +811,8 @@
             <div class="form-group">
               <label>Storage Facility</label>
               <select id="loanStorageId">
-                <option value="STR-PB-ASR-01">Amritsar Golden Agro Cold Chain</option>
                 <option value="STR-WB-JAL-01">Harimandir Cold Storage (Jalpaiguri)</option>
+                <option value="STR-PB-ASR-01">Amritsar Golden Agro Cold Chain</option>
               </select>
             </div>
             <div class="form-group">
@@ -869,7 +871,7 @@
       <!-- TAB 7: SCHEMES -->
       <div id="schemesTab" style="display:none;">
         <div class="card" style="border-top: 4px solid var(--govt-blue);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:gap:0.5rem;">
             <div>
               <h3 style="color:var(--govt-blue); margin-bottom:0.2rem;">
                 <i class="fa-solid fa-building-columns"></i> Government Welfare & Financial Support Schemes
@@ -900,7 +902,7 @@
     </div>
   </div>
 
-  <!-- UPI Escrow Modal -->
+  <!-- UPI Modal -->
   <div id="upiModal" class="app-modal">
     <div class="modal-sheet" style="text-align:center;">
       <h3 style="color:#0f172a; margin-bottom:0.2rem;"><i class="fa-solid fa-qrcode" style="color:#10b981;"></i> Scan to Fund Escrow</h3>
@@ -980,7 +982,6 @@
   <script>
     let user = null;
     let uploadedImageBase64 = '';
-    let currentCoords = null;
     let mapInstance = null;
     let mapMarkers = [];
     let isVoiceSpeechEnabled = true;
@@ -989,7 +990,6 @@
     let pendingEscrowTrade = null;
     let allSchemesData = [];
 
-    // Coordinates for Geolocation Centering
     const DISTRICT_GEO_COORDS = {
       "Amritsar": [31.6340, 74.8723],
       "Ludhiana": [30.9010, 75.8573],
@@ -1051,8 +1051,8 @@
     };
 
     const districtData = {
-      'Punjab': ['Amritsar', 'Ludhiana'],
       'West Bengal': ['Jalpaiguri', 'Darjeeling'],
+      'Punjab': ['Amritsar', 'Ludhiana'],
       'Bihar': ['Patna'],
       'Uttar Pradesh': ['Varanasi']
     };
@@ -1098,6 +1098,35 @@
       }
     }
 
+    // Weather Advisory Loader synced with Target District
+    async function loadWeatherAdvisory(targetDistrict = null) {
+      const district = targetDistrict || (user ? user.district : 'Jalpaiguri');
+      try {
+        const res = await fetch(`/api/advisory/weather?district=${encodeURIComponent(district)}`);
+        const data = await res.json();
+        
+        const elDistrict = document.getElementById('weatherDistrict');
+        const elTemp = document.getElementById('weatherTemp');
+        const elHum = document.getElementById('weatherHum');
+        const elRain = document.getElementById('weatherRain');
+        const elText = document.getElementById('weatherAdviceText');
+        const elBadge = document.getElementById('weatherRiskBadge');
+
+        if (elDistrict) elDistrict.innerText = data.district;
+        if (elTemp) elTemp.innerText = data.temperature;
+        if (elHum) elHum.innerText = data.humidity;
+        if (elRain) elRain.innerText = data.rainfallProbability;
+        if (elText) elText.innerText = data.aiAdvisory;
+
+        if (elBadge && data.riskLevel) {
+          elBadge.innerText = data.riskLevel;
+          elBadge.className = `badge ${data.riskBadgeClass || 'badge-alert'}`;
+        }
+      } catch (err) {
+        console.error("Weather advisory sync failed:", err);
+      }
+    }
+
     function switchTab(tab) {
       const tabs = ['marketplace', 'proximity', 'pooling', 'logistics', 'finance', 'disputes', 'schemes'];
       tabs.forEach(t => {
@@ -1115,7 +1144,7 @@
 
       if (tab === 'proximity') {
         setTimeout(() => { 
-          const currentDist = user ? user.district : 'Amritsar';
+          const currentDist = user ? user.district : 'Jalpaiguri';
           document.getElementById('radarDistrict').value = currentDist;
           runRadarScan(); 
         }, 150);
@@ -1175,17 +1204,17 @@
     function quickSwitchRole(selectedRole) {
       if (!user) {
         user = {
-          id: `${selectedRole.toUpperCase()}-PB-2026`,
-          name: selectedRole === 'FPO' ? 'Majha Farmers Producer Co.' : selectedRole === 'Buyer' ? 'Amritsar Foods Corp' : 'Gurpreet Singh',
+          id: `${selectedRole.toUpperCase()}-WB-2026`,
+          name: selectedRole === 'FPO' ? 'Dooars Farmers Producer Co.' : selectedRole === 'Buyer' ? 'Siliguri Foods Hub' : 'Ramesh Ghosh',
           role: selectedRole,
-          state: 'Punjab',
-          district: 'Amritsar',
-          location: 'Amritsar, Punjab',
-          phone: '9814011223'
+          state: 'West Bengal',
+          district: 'Jalpaiguri',
+          location: 'Jalpaiguri, West Bengal',
+          phone: '9883860358'
         };
       } else {
         user.role = selectedRole;
-        user.id = `${selectedRole.toUpperCase()}-PB-2026`;
+        user.id = `${selectedRole.toUpperCase()}-WB-2026`;
       }
 
       document.getElementById('authSection').style.display = 'none';
@@ -1201,6 +1230,7 @@
       document.getElementById('bannerUserId').innerText = user.id;
 
       applyRoleBasedUI(selectedRole);
+      loadWeatherAdvisory(user.district);
       showLiveToast('Role Switched', `Active dashboard updated to ${user.role} interface.`, 'success');
     }
 
@@ -1267,6 +1297,9 @@
         document.getElementById('bannerUserId').innerText = user.id;
 
         applyRoleBasedUI(user.role);
+        
+        // Sync weather advisory to the authenticated user's exact registered district
+        loadWeatherAdvisory(user.district);
         loadAIForecast('Rice');
         loadGovtSchemes();
       } catch (err) {
@@ -1330,7 +1363,7 @@
       spreadChartInstance = new Chart(c2.getContext('2d'), {
         type: 'bar',
         data: {
-          labels: ['Amritsar Mandi', 'Ludhiana APMC', 'Jalpaiguri Yard', 'Patna Hub'],
+          labels: ['Jalpaiguri APMC', 'Siliguri Mandi', 'Dhupguri Yard', 'Maynaguri'],
           datasets: [{ label: `${crop} Rate (₹/Qtl)`, data: [parseInt(intel.rate.replace(/[^0-9]/g,'')), parseInt(intel.rate.replace(/[^0-9]/g,''))+40, parseInt(intel.rate.replace(/[^0-9]/g,''))-30, parseInt(intel.rate.replace(/[^0-9]/g,''))+70], backgroundColor: ['#0d9488', '#10b981', '#0284c7', '#f59e0b'], borderRadius: 6 }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
@@ -1452,7 +1485,7 @@
     }
 
     // PROXIMITY RADAR WITH LEAFLET CENTERING
-    function initMap(lat = 31.6340, lng = 74.8723) {
+    function initMap(lat = 26.5400, lng = 88.7200) {
       const mapContainer = document.getElementById('radarMap');
       if (!mapContainer) return;
       if (!mapInstance) {
@@ -1472,7 +1505,7 @@
       if (district !== "All" && DISTRICT_GEO_COORDS[district]) {
         initMap(DISTRICT_GEO_COORDS[district][0], DISTRICT_GEO_COORDS[district][1]);
       } else {
-        initMap(31.6340, 74.8723);
+        initMap(26.5400, 88.7200);
       }
 
       mapMarkers.forEach(m => mapInstance.removeLayer(m));
@@ -1480,7 +1513,6 @@
 
       let q = `district=${encodeURIComponent(district)}&crop=${encodeURIComponent(crop)}&maxDistance=${maxDistance}`;
 
-      // Fetch cold storages
       const sRes = await fetch(`/api/proximity/storages?${q}`);
       const storages = await sRes.json();
       document.getElementById('storageCountBadge').innerText = storages.length;
@@ -1504,7 +1536,6 @@
         }).join('');
       }
 
-      // Fetch bulk buyers
       const bRes = await fetch(`/api/proximity/buyers?${q}`);
       const buyers = await bRes.json();
       document.getElementById('buyerCountBadge').innerText = buyers.length;
@@ -1532,14 +1563,14 @@
     async function handleCreateLot(e) {
       e.preventDefault();
       const payload = {
-        farmerId: user ? user.id : 'FARM-PB-01',
-        farmerName: user ? user.name : 'Gurpreet Singh',
-        farmerPhone: user ? user.phone : '9814011223',
+        farmerId: user ? user.id : 'FARM-WB-01',
+        farmerName: user ? user.name : 'Ramesh Ghosh',
+        farmerPhone: user ? user.phone : '9883860358',
         crop: document.getElementById('newLotCrop').value,
         grade: document.getElementById('newLotGrade').value,
         quantity: Number(document.getElementById('newLotQty').value),
         expectedPrice: Number(document.getElementById('newLotPrice').value),
-        location: user ? user.location : 'Amritsar, Punjab',
+        location: user ? user.location : 'Jalpaiguri, West Bengal',
         photoUrl: uploadedImageBase64 || 'https://via.placeholder.com/80?text=Crop'
       };
 
@@ -1561,7 +1592,7 @@
         <tr>
           <td><img src="${l.photoUrl || 'https://via.placeholder.com/48'}" class="crop-thumbnail" alt="Crop" /></td>
           <td><strong>${l.lotId}</strong><br><a href="javascript:void(0)" onclick="triggerDirectCertificateView()" style="font-size:0.75rem; color:#059669; font-weight:700;">Assay Cert</a></td>
-          <td>${l.farmerName}<br><a href="https://wa.me/91${(l.farmerPhone||'9814011223')}" target="_blank" style="font-size:0.75rem; color:#25d366; font-weight:700;">Chat WhatsApp</a></td>
+          <td>${l.farmerName}<br><a href="https://wa.me/91${(l.farmerPhone||'9883860358')}" target="_blank" style="font-size:0.75rem; color:#25d366; font-weight:700;">Chat WhatsApp</a></td>
           <td>${l.crop} (${l.grade || 'Grade A'})</td>
           <td>${l.quantity} Qtl</td>
           <td><strong>₹${(l.expectedPrice * l.quantity).toLocaleString()}</strong></td>
@@ -1693,7 +1724,7 @@
       const res = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ message: val, lang: document.getElementById('langSelector').value, userDistrict: user ? user.district : 'Amritsar' })
+        body: JSON.stringify({ message: val, lang: document.getElementById('langSelector').value, userDistrict: user ? user.district : 'Jalpaiguri' })
       });
       const data = await res.json();
       chat.innerHTML += `<div class="chat-msg msg-ai">${data.reply}</div>`;
@@ -1732,6 +1763,7 @@
     }
 
     window.onload = function() {
+      loadWeatherAdvisory('Jalpaiguri');
       loadAIForecast('Rice');
     };
   </script>
