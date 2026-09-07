@@ -3,1890 +3,512 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UpajTantram - Post-Harvest Operating System & Fair Trade Suite</title>
-  
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#10b981" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <title>UpajTantram (उपजतंत्रम्) — Resilient Post-Harvest OS</title>
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <!-- Leaflet CSS & JS for Spatial Mapping -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
-      --primary: #10b981;
-      --primary-dark: #047857;
-      --primary-gradient: linear-gradient(135deg, #059669 0%, #10b981 100%);
-      --accent-orange: #f59e0b;
-      --govt-blue: #2563eb;
-      --storage-teal: #0d9488;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
+      --primary: #15803d;
+      --primary-dark: #166534;
+      --accent: #d97706;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
       --border: #e2e8f0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-      --radius: 14px;
+      --danger: #dc2626;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif; }
+    body { background-color: #f8fafc; color: var(--slate-900); padding-bottom: 60px; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; }
+    /* Top Navigation */
+    header { background: #ffffff; border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.25rem; color: var(--primary-dark); }
+    .role-bar { display: flex; align-items: center; gap: 12px; }
+    select.role-select { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); font-weight: 600; background: var(--slate-50); outline: none; }
 
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid var(--border);
-      padding: 0.85rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: var(--shadow-sm);
-    }
-    .brand { display: flex; align-items: center; gap: 0.75rem; }
-    .brand-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--primary-gradient);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.2rem;
-    }
-    .brand h1 { font-size: 1.25rem; font-weight: 800; color: #064e3b; letter-spacing: -0.5px; }
+    /* Container */
+    .main-container { max-width: 1200px; margin: 24px auto; padding: 0 16px; display: flex; flex-direction: column; gap: 24px; }
 
-    .container { max-width: 1280px; margin: 1.5rem auto; padding: 0 1.25rem; }
+    /* Weather Banner */
+    .weather-banner { background: #fffbeb; border: 1px solid #fef3c7; border-left: 5px solid #d97706; border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .weather-info { display: flex; gap: 16px; font-size: 0.9rem; font-weight: 600; margin-top: 6px; color: var(--slate-700); }
 
-    .nav-tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
-      background: #ffffff;
-      padding: 0.5rem;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-      flex-wrap: wrap;
-    }
-    .nav-btn {
-      background: transparent;
-      color: var(--text-muted);
-      border: none;
-      padding: 0.6rem 1rem;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.2s ease;
-    }
-    .nav-btn:hover { color: var(--text-main); background: #f1f5f9; }
-    .nav-btn.active { background: var(--primary-gradient); color: white; }
-    .nav-btn.govt-btn.active { background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%); color: white; }
+    /* Layout Grid */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
 
-    .auth-wrapper {
-      max-width: 520px;
-      margin: 3rem auto;
-      background: #ffffff;
-      border-radius: var(--radius);
-      padding: 2.2rem;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border);
-    }
+    /* Standard Card Component */
+    .card { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 
-    .auth-switch {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      background: #f1f5f9;
-      padding: 0.35rem;
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
-    }
-    .auth-tab-btn {
-      padding: 0.6rem;
-      border: none;
-      background: transparent;
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .auth-tab-btn.active { background: #ffffff; color: var(--primary-dark); box-shadow: var(--shadow-sm); }
+    /* AI Price Forecaster */
+    .forecast-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .metric-box { background: var(--slate-50); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+    .metric-box .label { font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; }
+    .metric-box .val { font-size: 1.5rem; font-weight: 800; margin: 6px 0; }
+    .badge { display: inline-block; padding: 3px 8px; font-size: 0.75rem; font-weight: 700; border-radius: 999px; }
 
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: var(--shadow-md);
-      border: 1px solid var(--border);
-    }
-    .grid-main { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
+    /* Edge Assayer Scanner Area */
+    .scan-area { border: 2px dashed #cbd5e1; border-radius: 10px; padding: 24px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--slate-50); }
+    .scan-area:hover { border-color: var(--primary); }
 
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #0f172a;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
-    }
+    /* Buttons */
+    .btn-primary { background: var(--primary); color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; }
 
-    .form-group { margin-bottom: 1rem; }
-    label { display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.35rem; text-transform: uppercase; color: var(--text-muted); }
-    input, select, textarea {
-      width: 100%;
-      padding: 0.65rem 0.85rem;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-family: inherit;
-      background: #fcfdfe;
-    }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); background: #ffffff; }
-
-    button.btn-primary {
-      background: var(--primary-gradient);
-      color: white;
-      border: none;
-      padding: 0.75rem 1.2rem;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      transition: transform 0.15s;
-    }
-    button.btn-primary:hover { transform: translateY(-1px); }
-
-    .id-card-banner {
-      background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
-      color: white;
-      padding: 1.25rem 1.5rem;
-      border-radius: var(--radius);
-      margin-bottom: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: var(--shadow-md);
-    }
-    .id-code-pill {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(8px);
-      padding: 0.45rem 0.9rem;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      border: 1px solid rgba(255,255,255,0.25);
-      color: #6ee7b7;
-    }
-
-    #radarMap {
-      height: 300px;
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
-      border: 1px solid var(--border);
-      z-index: 1;
-    }
-
-    .badge { padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem; }
-    .badge-bullish { background: #dcfce7; color: #15803d; }
-    .badge-escrow { background: #dbeafe; color: #1e40af; }
-    .badge-storage { background: #ccfbf1; color: #0f766e; }
-    .badge-dist { background: #e0f2fe; color: #0369a1; font-weight: 800; }
-    .badge-alert { background: #fee2e2; color: #b91c1c; }
-    .badge-scheme { background: #ede9fe; color: #6b21a8; }
-
-    .photo-upload-zone {
-      border: 2px dashed #cbd5e1;
-      border-radius: 10px;
-      padding: 1.25rem;
-      text-align: center;
-      background: #f8fafc;
-      cursor: pointer;
-    }
-    .crop-preview-box {
-      margin-top: 0.5rem;
-      width: 100%;
-      height: 180px;
-      border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #ffffff;
-      border: 1px solid var(--border);
-    }
-    .crop-preview-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .crop-thumbnail { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
-
-    .chat-box {
-      height: 260px;
-      overflow-y: auto;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem;
-      background: #f8fafc;
-      margin-bottom: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-    .chat-msg { max-width: 85%; padding: 0.65rem 0.9rem; border-radius: 10px; font-size: 0.85rem; line-height: 1.45; }
-    .msg-user { align-self: flex-end; background: var(--primary-gradient); color: white; }
-    .msg-ai { align-self: flex-start; background: #ffffff; border: 1px solid var(--border); }
-
-    .storage-card {
-      border: 1px solid var(--border);
-      background: #ffffff;
-      padding: 1.25rem;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      box-shadow: var(--shadow-sm);
-    }
-
-    table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 0.5rem; }
-    th { background: #f8fafc; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 0.85rem 1rem; border-bottom: 1.5px solid var(--border); text-align: left; }
-    td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: middle; background: white; }
-
-    #toastContainer {
-      position: fixed;
-      top: 1.25rem;
-      right: 1.25rem;
-      z-index: 10000;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      pointer-events: none;
-    }
-    .toast-card {
-      pointer-events: auto;
-      min-width: 320px;
-      max-width: 400px;
-      background: #0f172a;
-      color: #f8fafc;
-      padding: 0.9rem 1.1rem;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      font-size: 0.85rem;
-      border-left: 4px solid var(--primary);
-      animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    .toast-card.alert-escrow { border-left-color: #2563eb; }
-    .toast-card.alert-loan { border-left-color: #f59e0b; }
-    .toast-card.alert-warn { border-left-color: #ef4444; }
-
-    @keyframes toastSlideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes toastSlideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
-    }
+    /* Modal */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 200; }
+    .modal-content { background: #ffffff; padding: 24px; border-radius: 12px; max-width: 420px; width: 90%; text-align: center; }
   </style>
 </head>
 <body>
 
   <header>
     <div class="brand">
-      <div class="brand-icon"><i class="fa-solid fa-wheat-awn"></i></div>
-      <div>
-        <h1>UpajTantram</h1>
-        <small style="color:var(--text-muted); font-size:0.75rem; font-weight:600;">Post-Harvest Operating System • Vision • Escrow • Logistics</small>
-      </div>
+      🌾 UpajTantram <span style="font-weight: 400; font-size: 1rem; color: #64748b;">(उपजतंत्रम्)</span>
     </div>
-    
-    <div style="display:flex; align-items:center;">
-      <div style="display:flex; align-items:center; gap:0.4rem; margin-right:1rem;">
-        <small style="font-weight:700; color:var(--text-muted); font-size:0.75rem;">ROLE:</small>
-        <select id="roleDemoSwitch" onchange="quickSwitchRole(this.value)" style="padding:0.35rem 0.6rem; border-radius:6px; font-weight:700; cursor:pointer;">
-          <option value="Farmer">👨‍🌾 Farmer</option>
-          <option value="FPO">🏬 FPO Kendra</option>
-          <option value="Buyer">🏢 Bulk Buyer</option>
-        </select>
-      </div>
-
-      <div style="display:flex; align-items:center; gap:0.4rem; margin-right:1rem;">
-        <i class="fa-solid fa-language" style="color:#059669; font-size:1.1rem;"></i>
-        <select id="langSelector" onchange="changeLanguage(this.value)" style="padding:0.3rem 0.6rem; border-radius:6px; font-weight:600; cursor:pointer;">
-          <option value="en">English</option>
-          <option value="bn">বাংলা (Bengali)</option>
-          <option value="hi">हिन्दी (Hindi)</option>
-        </select>
-      </div>
-
-      <div id="userHeader" style="display:none; align-items:center;">
-        <span id="userBadge"></span>
-        <button style="margin-left:1rem; padding:0.4rem 0.85rem; font-size:0.8rem; background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; border-radius:7px; font-weight:600; cursor:pointer;" onclick="logout()">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
-        </button>
-      </div>
+    <div class="role-bar">
+      <label for="userRole" style="font-size: 0.85rem; font-weight: 600; color: var(--slate-700);">Active Persona:</label>
+      <select id="userRole" class="role-select" onchange="switchRole(this.value)">
+        <option value="farmer">Farmer (उत्पादक)</option>
+        <option value="fpo">FPO Kendra Aggregator</option>
+        <option value="buyer">Institutional Bulk Buyer</option>
+      </select>
     </div>
   </header>
 
-  <div class="container">
-    
-    <!-- AUTHENTICATION CARD (OTP SUPPORTED) -->
-    <div id="authSection" class="auth-wrapper">
-      <div class="auth-switch">
-        <button class="auth-tab-btn active" id="tabBtnLogin" onclick="toggleAuthMode('login')">
-          <i class="fa-solid fa-right-to-bracket"></i> Sign In with OTP
-        </button>
-        <button class="auth-tab-btn" id="tabBtnRegister" onclick="toggleAuthMode('register')">
-          <i class="fa-solid fa-user-plus"></i> Register
-        </button>
-      </div>
+  <main class="main-container">
 
-      <!-- Login Form with OTP -->
-      <div id="loginForm">
-        <h3 style="margin-bottom:0.4rem; color:#0f172a;">Sign In to UpajTantram</h3>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">Enter your 10-digit number to receive a verification code.</p>
-        
-        <div class="form-group">
-          <label>10-Digit Mobile Number</label>
-          <div style="display:flex; gap:0.5rem;">
-            <input id="loginPhone" type="tel" pattern="[0-9]{10}" placeholder="9883860358" required />
-            <button type="button" class="btn-primary" style="width:auto; white-space:nowrap; padding:0 1.2rem;" onclick="requestOtp('login')">
-              Get OTP
-            </button>
-          </div>
-        </div>
-
-        <div id="loginOtpField" style="display:none; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:1rem;">
-          <div class="form-group">
-            <label>Enter 6-Digit OTP</label>
-            <input id="loginOtp" type="text" maxlength="6" placeholder="••••••" />
-            <small style="color:#059669; font-weight:600; display:block; margin-top:0.3rem;" id="loginOtpHint"></small>
-          </div>
-          <button type="button" class="btn-primary" onclick="submitOtpAuth('login')">
-            <i class="fa-solid fa-shield-halved"></i> Verify OTP & Sign In
-          </button>
+    <!-- 1. LIVE WEATHER & SPOILAGE RISK TELEMETRY -->
+    <section class="weather-banner" id="weatherBanner">
+      <div>
+        <h4 style="color: #92400e; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+          🌩️ Live Micro-Climate & Spoilage Advisory (Jalpaiguri Region)
+        </h4>
+        <p style="font-size: 0.88rem; color: #78350f; margin-top: 4px;" id="weatherAdvice">
+          Elevated relative humidity projected. Open-air farm storage susceptible to fungal deterioration. Move harvested lots to certified warehouse or cold chain.
+        </p>
+        <div class="weather-info">
+          <span>🌡️ Temp: <b id="telemetryTemp">29°C</b></span>
+          <span>💧 Humidity: <b id="telemetryHumidity">84%</b></span>
+          <span>🌧️ Rain Likelihood: <b id="telemetryRain">75% (Critical)</b></span>
         </div>
       </div>
+      <span class="badge" style="background: #fee2e2; color: var(--danger); font-size: 0.85rem; padding: 6px 12px;">HIGH SPOILAGE RISK</span>
+    </section>
 
-      <!-- Register Form with OTP -->
-      <form id="registerForm" style="display:none;" onsubmit="event.preventDefault(); requestOtp('register');">
-        <h3 style="margin-bottom:0.4rem; color:#0f172a;">Register Digital ID</h3>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem;">Create a verified producer or buyer credential.</p>
-
-        <div class="form-group">
-          <label>Full Name / Enterprise Name</label>
-          <input id="regName" required placeholder="e.g. Ramesh Chandra Ghosh" />
-        </div>
-
-        <div class="form-group">
-          <label>Mobile Number</label>
-          <input id="regPhone" type="tel" pattern="[0-9]{10}" required placeholder="9876543210" />
-        </div>
-
-        <div class="form-group">
-          <label>User Role</label>
-          <select id="regRole">
-            <option value="Farmer">Farmer / Smallholder</option>
-            <option value="FPO">FPO Manager (Aggregation Hub)</option>
-            <option value="Buyer">Processor / Bulk Buyer</option>
+    <!-- 2. AI PRICE FORECASTER & VOICE COPILOT -->
+    <div class="grid-2">
+      <!-- AI PRICE FORECASTER -->
+      <section class="card">
+        <div class="forecast-header">
+          <h3 style="font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            🧠 AI Price Forecaster
+          </h3>
+          <select id="cropForecastSelect" onchange="handleCropForecastChange(this.value)" class="role-select">
+            <option value="Rice (Dhan)" selected>Rice (Dhan)</option>
+            <option value="Potato (Alu)">Potato (Alu)</option>
+            <option value="Tomato">Tomato</option>
+            <option value="Maize (Corn)">Maize (Corn)</option>
           </select>
         </div>
 
-        <div class="grid-2">
-          <div class="form-group">
-            <label>State</label>
-            <select id="regState" onchange="populateDistricts()" required>
-              <option value="">-- Select State --</option>
-              <option value="West Bengal">West Bengal</option>
-              <option value="Bihar">Bihar</option>
-              <option value="Punjab">Punjab</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-            </select>
+        <!-- 3 Dynamic Summary Cards -->
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="label">Current Modal Rate</div>
+            <div class="val" id="fcModalRate">₹1540</div>
+            <span id="fcTrendBadge" class="badge" style="background:#dcfce7; color:#16a34a;">↗ BULLISH (+9.1%)</span>
           </div>
-          <div class="form-group">
-            <label>District</label>
-            <select id="regDistrict" required>
-              <option value="">-- Select State First --</option>
-            </select>
+
+          <div class="metric-box">
+            <div class="label">7-Day Forecast</div>
+            <div class="val" id="fcForecastRate">₹1680</div>
+            <span id="fcConfidence" style="font-size:0.75rem; color:#64748b;">Confidence: 92%</span>
+          </div>
+
+          <div class="metric-box">
+            <div class="label">Optimal Action</div>
+            <div class="val" id="fcActionTitle" style="font-size: 0.85rem; color: #d97706; min-height: 40px; display: flex; align-items: center; justify-content: center;">
+              HOLD IN NEARBY STORAGE
+            </div>
+            <span id="fcActionGain" style="font-size: 0.8rem; font-weight: 700; color: #16a34a;">+9.1% Projected Gain</span>
           </div>
         </div>
 
-        <button type="submit" id="regGetOtpBtn" class="btn-primary">
-          <i class="fa-solid fa-comment-sms"></i> Send Verification OTP
-        </button>
-
-        <div id="regOtpField" style="display:none; margin-top:1rem; border-top:1px dashed #cbd5e1; padding-top:1rem;">
-          <div class="form-group">
-            <label>Enter 6-Digit OTP</label>
-            <input id="regOtp" type="text" maxlength="6" placeholder="••••••" />
-            <small style="color:#059669; font-weight:600; display:block; margin-top:0.3rem;" id="regOtpHint"></small>
-          </div>
-          <button type="button" class="btn-primary" onclick="submitOtpAuth('register')">
-            <i class="fa-solid fa-user-check"></i> Verify OTP & Complete Registration
-          </button>
+        <!-- Chart.js Canvas -->
+        <div style="height: 220px; width: 100%;">
+          <canvas id="trajectoryChart"></canvas>
         </div>
-      </form>
-    </div>
+      </section>
 
-    <!-- MAIN APP DASHBOARD -->
-    <div id="appSection" style="display:none;">
-      
-      <!-- Top Navigation Tabs (Controlled by RBAC) -->
-      <div class="nav-tabs" id="mainNav">
-        <button class="nav-btn active" id="tabBtn_marketplace" onclick="switchTab('marketplace')">
-          <i class="fa-solid fa-chart-line"></i> Trade & Vision
-        </button>
-        <button class="nav-btn" id="tabBtn_proximity" onclick="switchTab('proximity')">
-          <i class="fa-solid fa-location-crosshairs"></i> Location Radar
-        </button>
-        <button class="nav-btn" id="tabBtn_pooling" onclick="switchTab('pooling')">
-          <i class="fa-solid fa-people-group"></i> FPO Pooling
-        </button>
-        <button class="nav-btn" id="tabBtn_logistics" onclick="switchTab('logistics')">
-          <i class="fa-solid fa-truck-fast"></i> Book Truck
-        </button>
-        <button class="nav-btn" id="tabBtn_finance" onclick="switchTab('finance')">
-          <i class="fa-solid fa-hand-holding-dollar"></i> Storage Loans
-        </button>
-        <button class="nav-btn" id="tabBtn_disputes" onclick="switchTab('disputes')">
-          <i class="fa-solid fa-scale-balanced"></i> Grievances
-        </button>
-        <button class="nav-btn govt-btn" id="tabBtn_schemes" onclick="switchTab('schemes')">
-          <i class="fa-solid fa-building-columns"></i> Govt Schemes
-        </button>
-      </div>
-
-      <!-- User ID Banner -->
-      <div class="id-card-banner">
+      <!-- VERNACULAR VOICE AI COPILOT -->
+      <section class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
-          <div style="font-size:0.75rem; opacity:0.8; text-transform:uppercase; font-weight:700;">Verified Digital Identity</div>
-          <h2 style="margin:0.1rem 0; font-size:1.35rem;" id="bannerUserName">Farmer Name</h2>
-          <span style="font-size:0.85rem; opacity:0.9;" id="bannerUserLocation"><i class="fa-solid fa-location-dot"></i> Jalpaiguri, West Bengal</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              🤖 UpajTantram Voice AI
+            </h3>
+            <button class="btn-outline" style="font-size: 0.8rem;" onclick="toggleSpeech()">🔊 Voice Feedback: ON</button>
+          </div>
+          <div id="chatWindow" style="background: var(--slate-50); border: 1px solid var(--border); border-radius: 8px; padding: 14px; height: 230px; overflow-y: auto; font-size: 0.9rem; display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: #ffffff; padding: 10px; border-radius: 8px; border-left: 3px solid var(--primary); max-width: 85%;">
+              👋 <b>Namaste!</b> I am your UpajTantram Copilot. Tap the mic or type to inquire about current APMC mandi prices, cold-chain availability, or crop disease risks.
+            </div>
+          </div>
         </div>
-        <div style="text-align:right;">
-          <span style="font-size:0.75rem; opacity:0.8; display:block; font-weight:700; margin-bottom:0.3rem;">UPAJTANTRAM CREDENTIAL ID</span>
-          <span class="id-code-pill" id="bannerUserId">FARM-WB-0000</span>
+
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <input type="text" id="voicePromptInput" placeholder="Ask: 'Should I hold my potato crop?' or 'কাছাকাছি কোল্ড স্টোরেজ কোথায়?'" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none;" />
+          <button class="btn-primary" onclick="handleVoiceQuery()">Ask</button>
+          <button class="btn-outline" onclick="triggerMic()" title="Speak in Hindi/Bengali/English">🎙️</button>
         </div>
+      </section>
+    </div>
+
+    <!-- 3. CLIENT-SIDE EDGE-AI QUALITY ASSAYER -->
+    <section class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">
+          🔬 In-Browser Edge-AI Crop Assayer (0-Latency)
+        </h3>
+        <span class="badge" style="background:#dbeafe; color:#1d4ed8;">Client-Side Canvas Inference</span>
       </div>
 
-      <!-- TAB 1: MAIN TRADE, VISION & ANALYTICS -->
-      <div id="marketplaceTab">
-        
-        <!-- Live Weather & Spoilage Advisory Banner -->
-        <div class="card" style="background:#fffbeb; border:1px solid #fef3c7; border-left:6px solid var(--accent-orange);">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-              <h4 style="color:#b45309; margin-bottom:0.2rem;"><i class="fa-solid fa-cloud-bolt"></i> Live Weather & Spoilage Advisory (<span id="weatherDistrict">Jalpaiguri</span>)</h4>
-              <p style="font-size:0.88rem; color:#92400e;" id="weatherAdviceText">Loading advisory...</p>
-            </div>
-            <span class="badge badge-alert" id="weatherRiskBadge">HIGH RISK</span>
+      <div class="grid-2">
+        <div>
+          <div class="scan-area" onclick="document.getElementById('cropFileInput').click()">
+            <input type="file" id="cropFileInput" accept="image/*" style="display: none;" onchange="processEdgeAssay(this)" />
+            <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
+            <p style="font-weight: 600;">Capture or Upload Produce Image</p>
+            <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Evaluates chromatic variations & necrotic lesions offline</p>
           </div>
-          <div style="margin-top:0.6rem; font-size:0.82rem; color:#78350f; display:flex; gap:1.2rem;">
-            <span><i class="fa-solid fa-temperature-half"></i> Temp: <strong id="weatherTemp">29°C</strong></span>
-            <span><i class="fa-solid fa-droplet"></i> Humidity: <strong id="weatherHum">84%</strong></span>
-            <span><i class="fa-solid fa-umbrella"></i> Rain Chance: <strong id="weatherRain">75%</strong></span>
-          </div>
+          <canvas id="assayCanvas" style="display: none; max-width: 100%; border-radius: 8px; margin-top: 12px;"></canvas>
         </div>
 
-        <div class="grid-main">
+        <div style="background: var(--slate-50); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
-            <!-- AI Price Tracker Widget -->
-            <div class="card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h3 class="card-title" style="margin-bottom:0;"><i class="fa-solid fa-brain"></i> AI Price Forecaster</h3>
-                <select id="forecastCrop" onchange="loadAIForecast()" style="width:auto; font-weight:600;">
-                  <option value="Potato">Potato (Aloo)</option>
-                  <option value="Rice">Rice (Dhan)</option>
-                  <option value="Maize">Maize (Corn)</option>
-                  <option value="Tomato">Tomato</option>
-                </select>
-              </div>
-              <div class="grid-3">
-                <div style="background:#f8fafc; border:1px solid var(--border); padding:1rem; border-radius:10px; text-align:center;">
-                  <small style="color:var(--text-muted); font-weight:600;">Current Modal Rate</small>
-                  <h2 style="margin:0.2rem 0;" id="fcCurrent">₹1,540</h2>
-                  <span class="badge badge-bullish" id="fcTrend"><i class="fa-solid fa-arrow-trend-up"></i> BULLISH</span>
-                </div>
-                <div style="background:#f8fafc; border:1px solid var(--border); padding:1rem; border-radius:10px; text-align:center;">
-                  <small style="color:var(--text-muted); font-weight:600;">7-Day Forecast</small>
-                  <h2 style="margin:0.2rem 0;" id="fc7d">₹1,680</h2>
-                  <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Confidence: 92%</span>
-                </div>
-                <div style="background:#f8fafc; border:1px solid var(--border); padding:1rem; border-radius:10px; text-align:center;">
-                  <small style="color:var(--text-muted); font-weight:600;">Optimal Action</small>
-                  <h4 style="margin:0.2rem 0; color:var(--accent-orange); font-size:1rem;" id="fcAction">HOLD IN STORAGE</h4>
-                  <small style="font-size:0.75rem; color:#059669; font-weight:700;">+13.6% Gain</small>
-                </div>
-              </div>
-            </div>
-
-            <!-- Chart.js Price Analytics -->
-            <div class="card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <h3 class="card-title" style="margin-bottom:0;"><i class="fa-solid fa-chart-line"></i> Price Trajectory & Mandi Spread Analytics</h3>
-                <span class="badge badge-bullish"><i class="fa-solid fa-clock-rotate-left"></i> Historical + 14-Day Cone</span>
-              </div>
-              <div class="grid-2">
-                <div style="height: 220px;">
-                  <canvas id="priceTrajectoryChart"></canvas>
-                </div>
-                <div style="height: 220px;">
-                  <canvas id="mandiSpreadChart"></canvas>
-                </div>
-              </div>
-            </div>
-
-            <!-- FARMER LOT PUBLISHING (EDGE AI COMPUTER VISION ASSAYER) -->
-            <div id="farmerPanel" class="card" style="display:none;">
-              <h3 class="card-title"><i class="fa-solid fa-camera-retro"></i> AI Crop Vision & Lot Publishing</h3>
-              <form onsubmit="handleCreateLot(event)" class="grid-2">
-                
-                <div class="form-group" style="grid-column: span 2;">
-                  <label>📸 Upload Crop Photo (Automatic Identification & Condition Assessment)</label>
-                  <div class="photo-upload-zone" onclick="document.getElementById('cropPhotoInput').click()">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.8rem; color:var(--primary); margin-bottom:0.4rem;"></i>
-                    <p style="font-size:0.88rem; font-weight:700; color:#1e293b;">Click to upload image for instant pixel assay</p>
-                    <input type="file" id="cropPhotoInput" accept="image/*" style="display:none;" onchange="previewAndRecognizeCrop(event)" />
-                  </div>
-                  <div class="crop-preview-box" id="photoPreviewBox">
-                    <span style="color:#94a3b8; font-size:0.85rem;" id="photoPlaceholderText">AI recognition preview will appear here</span>
-                    <img id="cropImagePreview" style="display:none;" alt="Crop Preview" />
-                  </div>
-                  <div id="aiRecognitionResult" style="display:none; margin-top:0.6rem; background:#f0fdf4; border:1px solid #bbf7d0; padding:0.75rem 0.9rem; border-radius:8px; font-size:0.85rem; color:#065f46;">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> <strong>AI Diagnosis:</strong> <span id="detectedCropName">Potato</span> (<span id="detectedConf">98.2%</span>) | <span id="detectedGrade">Grade A</span>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label>Crop</label>
-                  <select id="newLotCrop">
-                    <option value="Potato">Potato</option>
-                    <option value="Rice">Rice</option>
-                    <option value="Maize">Maize</option>
-                    <option value="Tomato">Tomato</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Quality Grade</label>
-                  <select id="newLotGrade">
-                    <option value="Grade A (Assayed)">Grade A (Assayed)</option>
-                    <option value="Grade B (Standard)">Grade B (Standard)</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Quantity (Quintals)</label>
-                  <input type="number" id="newLotQty" value="100" required />
-                </div>
-                <div class="form-group">
-                  <label>Reserve Price (₹ / Qtl)</label>
-                  <input type="number" id="newLotPrice" value="1600" required />
-                </div>
-
-                <button type="submit" class="btn-primary" style="grid-column: span 2;">
-                  <i class="fa-solid fa-arrow-up-from-bracket"></i> Publish Lot & Match Local Buyers
-                </button>
-              </form>
-
-              <div id="publishResultsSection" style="display:none; margin-top:1.5rem; border-top:2px dashed #cbd5e1; padding-top:1.25rem;">
-                <div style="background:#ecfdf5; border:1px solid #a7f3d0; padding:0.85rem 1rem; border-radius:8px; margin-bottom:1rem;">
-                  <strong style="color:#065f46;"><i class="fa-solid fa-circle-check"></i> Lot Published Successfully!</strong>
-                  <p style="font-size:0.85rem; color:#047857; margin-top:0.2rem;" id="publishLocationText"></p>
-                </div>
-                <h4 style="margin-bottom:0.5rem; font-size:0.9rem;">🏢 Verified Nearby Buyers Sourcing this Crop</h4>
-                <div id="quickBuyerMatches"></div>
-                <h4 style="margin:1rem 0 0.5rem 0; font-size:0.9rem;">🏬 Nearby Cold Storages Available for Holding</h4>
-                <div id="quickStorageMatches"></div>
-              </div>
-            </div>
-
-            <!-- BUYER PROCUREMENT TABLE -->
-            <div id="buyerPanel" class="card" style="display:none;">
-              <h3 class="card-title"><i class="fa-solid fa-store"></i> Direct Procurement Marketplace</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Sample</th>
-                    <th>Lot ID</th>
-                    <th>Farmer & WhatsApp</th>
-                    <th>Crop</th>
-                    <th>Qty</th>
-                    <th>Value</th>
-                    <th>Escrow Action</th>
-                  </tr>
-                </thead>
-                <tbody id="lotsTableBody"></tbody>
-              </table>
-            </div>
-
+            <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px;">Computer Vision Diagnosis</h4>
+            <p style="font-size: 0.9rem; margin-bottom: 6px;">Identified Crop: <b id="diagCrop">None</b></p>
+            <p style="font-size: 0.9rem; margin-bottom: 6px;">Defect / Rot Surface: <b id="diagDefect">0.0%</b></p>
+            <p style="font-size: 0.9rem; margin-bottom: 6px;">Assigned Grade: <b id="diagGrade">—</b></p>
+            <p style="font-size: 0.9rem; margin-bottom: 6px;">Estimated Mandi Value: <b id="diagValuation">—</b></p>
           </div>
-
-          <!-- RIGHT COLUMN: MULTILINGUAL AI VOICE COPILOT -->
-          <div>
-            <div class="card" style="position: sticky; top: 5.5rem;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                <h3 class="card-title" style="margin-bottom:0;"><i class="fa-solid fa-robot"></i> UpajTantram Voice AI</h3>
-                <button onclick="toggleVoiceSpeech()" id="voiceToggleBtn" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; padding:0.3rem 0.6rem; font-size:0.75rem; cursor:pointer;" title="Toggle Speech">
-                  <i class="fa-solid fa-volume-high"></i> Voice ON
-                </button>
-              </div>
-              <div class="chat-box" id="chatBox">
-                <div class="chat-msg msg-ai">
-                  👋 <strong>Namaste!</strong> I am your UpajTantram Copilot. Tap the mic or type to get storage, weather risk, or market price guidance.
-                </div>
-              </div>
-              <div style="display:flex; gap:0.5rem;">
-                <input type="text" id="chatInput" placeholder="Ask in English, हिन्दी, or বাংলা..." onkeypress="if(event.key==='Enter') sendChat()" />
-                <button onclick="startVoiceRecognition()" style="background:#0284c7; color:white; border:none; padding:0 1rem; border-radius:8px; cursor:pointer;" title="Speak">
-                  <i class="fa-solid fa-microphone"></i>
-                </button>
-                <button onclick="sendChat()" style="background:var(--primary); color:white; border:none; padding:0 1rem; border-radius:8px; cursor:pointer;">
-                  <i class="fa-solid fa-paper-plane"></i>
-                </button>
-              </div>
-              <div id="quickPromptRow" style="margin-top:0.6rem; display:flex; flex-wrap:wrap; gap:0.3rem;">
-                <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('Where is the nearest cold storage?')">🏬 Storages</button>
-                <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('Check weather rot risk')">⚠️ Weather Risk</button>
-                <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('How does e-NWR storage loan work?')">💳 Storage Loan</button>
-                <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('What are the mandi rates today?')">📈 Mandi Rates</button>
-              </div>
-            </div>
-          </div>
+          <button class="btn-primary" onclick="openCertModal()" id="btnGenCert" disabled>Generate Verified Assay Certificate (PDF)</button>
         </div>
       </div>
+    </section>
 
-      <!-- TAB 2: PROXIMITY RADAR -->
-      <div id="proximityTab" style="display:none;">
-        <div class="card">
-          <h3 class="card-title"><i class="fa-solid fa-location-crosshairs"></i> Nearby Facility & Buyer Radar</h3>
-          <div class="radar-bar grid-4" style="background:#f0f9ff; border:1px solid #bae6fd; padding:1rem; border-radius:10px; margin-bottom:1rem;">
-            <div>
-              <label>District</label>
-              <select id="radarDistrict" onchange="runRadarScan()">
-                <option value="Jalpaiguri" selected>Jalpaiguri</option>
-                <option value="Darjeeling">Darjeeling / Siliguri</option>
-                <option value="Alipurduar">Alipurduar</option>
-                <option value="All">All Regions</option>
-              </select>
-            </div>
-            <div>
-              <label>Crop</label>
-              <select id="radarCrop" onchange="runRadarScan()">
-                <option value="All">All Crops</option>
-                <option value="Potato">Potato</option>
-                <option value="Tomato">Tomato</option>
-                <option value="Rice">Rice</option>
-              </select>
-            </div>
-            <div>
-              <label>Radius</label>
-              <select id="radarRadius" onchange="runRadarScan()">
-                <option value="25">Within 25 km</option>
-                <option value="50" selected>Within 50 km</option>
-                <option value="100">Within 100 km</option>
-              </select>
-            </div>
-            <div style="display:flex; gap:0.4rem; align-items:flex-end;">
-              <button class="btn-primary" onclick="runRadarScan()" style="flex:1;">Scan</button>
-              <button class="btn-primary" onclick="detectGPSLocation()" style="background:#0284c7; flex:1;" title="Use GPS"><i class="fa-solid fa-crosshairs"></i> GPS</button>
-            </div>
-          </div>
-
-          <div id="radarMap"></div>
-
-          <div class="grid-2">
-            <div>
-              <h4 style="color:var(--storage-teal); margin-bottom:0.6rem;">Nearby Storages (<span id="storageCountBadge">0</span>)</h4>
-              <div id="radarStorageResults"></div>
-            </div>
-            <div>
-              <h4 style="color:#0284c7; margin-bottom:0.6rem;">Nearby Buyers (<span id="buyerCountBadge">0</span>)</h4>
-              <div id="radarBuyerResults"></div>
-            </div>
-          </div>
-        </div>
+    <!-- 4. ACTIVE MARKETPLACE & NODAL ESCROW RAILS -->
+    <section class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">📦 Assayed Produce Lots & Direct Settlement</h3>
+        <span class="badge" style="background:#fef3c7; color:#b45309;">RBI Nodal Escrow Model</span>
       </div>
 
-      <!-- TAB 3: FPO LOT POOLING -->
-      <div id="poolingTab" style="display:none;">
-        <div class="card">
-          <h3 class="card-title"><i class="fa-solid fa-people-group"></i> FPO Smallholder Lot Aggregation Pool</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">Combine 5–10 Quintal harvests with fellow farmers to form 100+ Quintal wholesale truckloads.</p>
-          
-          <div class="grid-2">
-            <div>
-              <h4 style="margin-bottom:0.6rem;">Create New Aggregation Pool</h4>
-              <form onsubmit="handleCreatePool(event)">
-                <div class="form-group">
-                  <label>Commodity</label>
-                  <select id="poolCrop"><option>Potato</option><option>Rice</option><option>Maize</option></select>
-                </div>
-                <div class="form-group">
-                  <label>Target Pool Volume (Quintals)</label>
-                  <input type="number" id="poolTargetQty" value="100" min="20" required />
-                </div>
-                <div class="form-group">
-                  <label>Minimum Target Price (₹ / Qtl)</label>
-                  <input type="number" id="poolPrice" value="1650" required />
-                </div>
-                <button type="submit" class="btn-primary"><i class="fa-solid fa-plus"></i> Open Aggregation Pool</button>
-              </form>
-            </div>
-            <div>
-              <h4 style="margin-bottom:0.6rem;">Active Community Pools</h4>
-              <div id="activePoolsList"></div>
-            </div>
-          </div>
-        </div>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border); color: #64748b;">
+              <th style="padding: 10px;">Lot ID</th>
+              <th style="padding: 10px;">Crop</th>
+              <th style="padding: 10px;">Volume</th>
+              <th style="padding: 10px;">Assay Grade</th>
+              <th style="padding: 10px;">FPO / Producer</th>
+              <th style="padding: 10px;">Total Price</th>
+              <th style="padding: 10px;">Escrow Settlement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 12px 10px; font-weight: 700;">#UPJ-9021</td>
+              <td style="padding: 12px 10px;">Potato (Kufri Jyoti)</td>
+              <td style="padding: 12px 10px;">50 Quintals</td>
+              <td style="padding: 12px 10px;"><span class="badge" style="background:#dcfce7; color:#16a34a;">Grade A (98.2%)</span></td>
+              <td style="padding: 12px 10px;">Jalpaiguri FPO Kendra</td>
+              <td style="padding: 12px 10px; font-weight: 700;">₹61,000</td>
+              <td style="padding: 12px 10px;">
+                <button class="btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="triggerEscrowPay('#UPJ-9021', 61000)">Pay UPI Escrow</button>
+              </td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 12px 10px; font-weight: 700;">#UPJ-9024</td>
+              <td style="padding: 12px 10px;">Tomato (Hybrid)</td>
+              <td style="padding: 12px 10px;">25 Quintals</td>
+              <td style="padding: 12px 10px;"><span class="badge" style="background:#dcfce7; color:#16a34a;">Grade A (96.5%)</span></td>
+              <td style="padding: 12px 10px;">Siliguri Agri Hub</td>
+              <td style="padding: 12px 10px; font-weight: 700;">₹52,500</td>
+              <td style="padding: 12px 10px;">
+                <button class="btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="triggerEscrowPay('#UPJ-9024', 52500)">Pay UPI Escrow</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </section>
 
-      <!-- TAB 4: TRUCK & LOGISTICS BOOKING -->
-      <div id="logisticsTab" style="display:none;">
-        <div class="card">
-          <h3 class="card-title"><i class="fa-solid fa-truck-fast"></i> On-Demand Farm-Gate Transport Booking</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">Hire verified regional haulage trucks with transparent per-kilometer billing.</p>
+  </main>
 
-          <form onsubmit="handleBookTruck(event)" class="grid-2">
-            <div class="form-group">
-              <label>Pickup Location (District)</label>
-              <input type="text" id="pickupDist" value="Jalpaiguri" required />
-            </div>
-            <div class="form-group">
-              <label>Drop Mandi / Warehouse</label>
-              <input type="text" id="dropMandi" value="Siliguri Wholesale Yard" required />
-            </div>
-            <div class="form-group">
-              <label>Vehicle Capacity</label>
-              <select id="vehicleType" onchange="updateEstimatedFreight()">
-                <option value="Pickup (1.5T)">Pickup Van (1.5 Ton) - ₹20/km</option>
-                <option value="Mini Truck (4T)">Mini Lorry (4 Ton) - ₹32/km</option>
-                <option value="Heavy Truck (12T)">Heavy Truck (12 Ton) - ₹50/km</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Estimated Distance (KM)</label>
-              <input type="number" id="estKm" value="48" onchange="updateEstimatedFreight()" required />
-            </div>
-            <div style="grid-column: span 2; background:#f8fafc; padding:0.8rem; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-              <div>Estimated Freight: <strong id="estFreightDisplay" style="color:#059669; font-size:1.1rem;">₹1,460</strong></div>
-              <button type="submit" class="btn-primary" style="width:auto;"><i class="fa-solid fa-check"></i> Confirm Truck Dispatch</button>
-            </div>
-          </form>
-          <div id="truckBookingResult" style="display:none; margin-top:1rem; background:#ecfdf5; border:1px solid #a7f3d0; padding:1rem; border-radius:8px;"></div>
-        </div>
+  <!-- DYNAMIC UPI ESCROW MODAL -->
+  <div class="modal" id="escrowModal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 8px;">RBI Nodal Escrow Lock</h3>
+      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">Funds remain in zero-default bank trust account until weighbridge delivery audit is validated.</p>
+      <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+        <p style="font-size: 0.9rem;">Transaction Ref: <b id="modalLotId">—</b></p>
+        <p style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin: 6px 0;" id="modalAmount">₹0</p>
+        <img id="upiQrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=upajtantram@nodal&pn=UpajTantramEscrow" alt="UPI QR" style="margin-top: 10px; border-radius: 6px;" />
       </div>
-
-      <!-- TAB 5: e-NWR WAREHOUSE PLEDGE LOANS -->
-      <div id="financeTab" style="display:none;">
-        <div class="card">
-          <h3 class="card-title"><i class="fa-solid fa-hand-holding-dollar"></i> Instant Credit Against Stored Produce (e-NWR)</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">Avoid distress harvest sales. Sanction a 70% cash advance at 7.0% p.a. against goods in cold storage.</p>
-
-          <form onsubmit="handleApplyLoan(event)" class="grid-2">
-            <div class="form-group">
-              <label>Storage Facility</label>
-              <select id="loanStorageId">
-                <option value="STR-JAL-01">Harimandir Cold Storage (Jalpaiguri)</option>
-                <option value="STR-JAL-02">Baba Jalpesh Agro Cold Store</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Crop Deposited</label>
-              <select id="loanCrop"><option>Potato</option><option>Rice</option><option>Maize</option></select>
-            </div>
-            <div class="form-group">
-              <label>Deposited Volume (Quintals)</label>
-              <input type="number" id="loanQty" value="100" oninput="recalcLoan()" required />
-            </div>
-            <div class="form-group">
-              <label>Benchmark Mandi Rate (₹/Qtl)</label>
-              <input type="number" id="loanMandiRate" value="1540" oninput="recalcLoan()" required />
-            </div>
-            <div style="grid-column: span 2; background:#f1f5f9; padding:1rem; border-radius:8px; margin-bottom:0.5rem;">
-              <div style="display:flex; justify-content:space-between;">
-                <span>Total Produce Value: <strong id="loanTotalVal">₹1,54,000</strong></span>
-                <span>Max Sanction (70% LTV): <strong id="loanSanctionVal" style="color:#059669; font-size:1.1rem;">₹1,07,800</strong></span>
-              </div>
-            </div>
-            <button type="submit" class="btn-primary" style="grid-column: span 2;"><i class="fa-solid fa-bolt"></i> Disburse 70% Loan Advance to Bank</button>
-          </form>
-          <div id="loanResultBox" style="display:none; margin-top:1rem; background:#ecfdf5; border:1px solid #a7f3d0; padding:1rem; border-radius:8px;"></div>
-        </div>
-      </div>
-
-      <!-- TAB 6: DISPUTES & GRIEVANCE RESOLUTION -->
-      <div id="disputesTab" style="display:none;">
-        <div class="card">
-          <h3 class="card-title"><i class="fa-solid fa-scale-balanced"></i> Escrow Dispute & Grievance Redressal</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;">Dispute quality or delivery discrepancies. Automatically pauses escrow payouts until mediated.</p>
-
-          <form onsubmit="handleRaiseDispute(event)" class="grid-2">
-            <div class="form-group">
-              <label>Transaction ID</label>
-              <input type="text" id="dispTxId" required placeholder="e.g. TXN-104921" />
-            </div>
-            <div class="form-group">
-              <label>Dispute Category</label>
-              <select id="dispReason">
-                <option value="Moisture Content Exceeds Spec">Moisture Content Exceeds Grade Spec</option>
-                <option value="Quantity Shortage at Weighbridge">Quantity Shortage at Weighbridge</option>
-                <option value="Physical Rot / Spoilage in Transit">Physical Rot / Decay in Transit</option>
-                <option value="Delayed Delivery Beyond 48h">Delayed Delivery Beyond 48h</option>
-              </select>
-            </div>
-            <div class="form-group" style="grid-column: span 2;">
-              <label>Assay Evidence / Notes</label>
-              <textarea id="dispNotes" rows="3" placeholder="Describe assay inspection results or attach defect percentage"></textarea>
-            </div>
-            <button type="submit" class="btn-primary" style="background:#b91c1c; grid-column: span 2;">
-              <i class="fa-solid fa-pause"></i> Freeze Escrow & Initiate Dispute Mediation
-            </button>
-          </form>
-          <div id="disputeResultBox" style="display:none; margin-top:1rem; background:#fee2e2; border:1px solid #fca5a5; padding:1rem; border-radius:8px; color:#991b1b;"></div>
-        </div>
-      </div>
-
-      <!-- TAB 7: DEDICATED GOVERNMENT SCHEMES DIRECTORY -->
-      <div id="schemesTab" style="display:none;">
-        <div class="card" style="border-top: 4px solid var(--govt-blue);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
-            <div>
-              <h3 style="color:var(--govt-blue); margin-bottom:0.2rem;">
-                <i class="fa-solid fa-building-columns"></i> Government Welfare & Financial Support Schemes
-              </h3>
-              <p style="font-size:0.85rem; color:var(--text-muted);">
-                Official portals for direct DBT income assistance, subsidized crop insurance, cold chain grants, and institutional credit.
-              </p>
-            </div>
-            <span class="badge" style="background:#dbeafe; color:#1d4ed8; font-size:0.8rem;">
-              <i class="fa-solid fa-circle-check"></i> Official Govt Portals
-            </span>
-          </div>
-
-          <div style="margin-bottom:1.25rem; display:flex; gap:0.6rem; flex-wrap:wrap;">
-            <input type="text" id="schemeSearchInput" oninput="filterSchemes()" placeholder="Search schemes (e.g. KISAN, Bandhu, Insurance)..." style="flex:1; min-width:260px;" />
-            <select id="schemeCategoryFilter" onchange="filterSchemes()" style="width:auto;">
-              <option value="All">All Categories</option>
-              <option value="Income Support">Direct Income Support</option>
-              <option value="Crop Insurance">Crop Insurance</option>
-              <option value="Credit & Loans">Credit & Loans</option>
-              <option value="Post-Harvest & Storage">Infrastructure & Cold Storage</option>
-            </select>
-          </div>
-
-          <div id="schemesListContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap:1.2rem;"></div>
-        </div>
-      </div>
-
+      <button class="btn-primary" style="width: 100%;" onclick="closeEscrowModal()">Simulate Bank Confirmation (UTR Received)</button>
     </div>
   </div>
 
-  <!-- UPI Escrow Modal -->
-  <div id="upiModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:14px; padding:1.8rem; max-width:400px; width:90%; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
-      <h3 style="color:#0f172a; margin-bottom:0.2rem;"><i class="fa-solid fa-qrcode" style="color:#10b981;"></i> Scan to Fund Escrow</h3>
-      <p style="font-size:0.85rem; color:#64748b; margin-bottom:1rem;">Scan via any UPI App (GPay, PhonePe, Paytm, BHIM)</p>
-      
-      <div style="display:flex; justify-content:center; margin-bottom:1rem;">
-        <img id="upiQrImg" src="" alt="UPI QR Code" style="border-radius:8px; border:1px solid #e2e8f0; width:200px; height:200px;" />
-      </div>
-
-      <div style="background:#f8fafc; padding:0.8rem; border-radius:8px; font-size:0.85rem; margin-bottom:1rem; text-align:left;">
-        <div>Payee VPA: <strong id="upiVpaText">upajtantram.escrow@rbi-nodal</strong></div>
-        <div>Escrow Amount: <strong id="upiAmountText" style="color:#059669; font-size:1.1rem;">₹0</strong></div>
-        <div style="font-size:0.75rem; color:#64748b; margin-top:0.3rem;">Simulated UTR: <span id="mockUtrText">UTR000000000000</span></div>
-      </div>
-
-      <div style="display:flex; gap:0.5rem;">
-        <button class="btn-primary" onclick="confirmUpiDeposit()"><i class="fa-solid fa-check"></i> Authorize Payment</button>
-        <button onclick="closeUpiModal()" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; border-radius:8px; padding:0.6rem 1rem; cursor:pointer;">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Notification Toast Container -->
-  <div id="toastContainer"></div>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
-    let user = null;
-    let uploadedImageBase64 = '';
-    let currentCoords = null;
-    let mapInstance = null;
-    let mapMarkers = [];
-    let isVoiceSpeechEnabled = true;
-    let priceChartInstance = null;
-    let spreadChartInstance = null;
-    let pendingEscrowTrade = null;
-    let allSchemesData = [];
-
-    const districtData = {
-      'West Bengal': ['Jalpaiguri', 'Darjeeling', 'Cooch Behar', 'Alipurduar', 'Malda'],
-      'Bihar': ['Kishanganj', 'Purnia', 'Katihar', 'Patna'],
-      'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar'],
-      'Uttar Pradesh': ['Varanasi', 'Agra', 'Kanpur']
+    // ================= 1. CROP PRICE FORECASTER MATRIX =================
+    const FORECAST_INTEL = {
+      "Rice (Dhan)": {
+        rate: "₹1540",
+        forecast: "₹1680",
+        trendText: "↗ BULLISH (+9.1%)",
+        trendBg: "#dcfce7",
+        trendColor: "#16a34a",
+        confidence: "Confidence: 92%",
+        action: "HOLD IN NEARBY COLD STORAGE",
+        actionGain: "+9.1% Projected Gain",
+        gainColor: "#16a34a",
+        chartLabels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+        chartData: [1540, 1560, 1590, 1610, 1640, 1665, 1680]
+      },
+      "Potato (Alu)": {
+        rate: "₹1220",
+        forecast: "₹1380",
+        trendText: "↗ BULLISH (+13.1%)",
+        trendBg: "#dcfce7",
+        trendColor: "#16a34a",
+        confidence: "Confidence: 88%",
+        action: "STORE IN LOCAL WAREHOUSE",
+        actionGain: "+13.1% Projected Gain",
+        gainColor: "#16a34a",
+        chartLabels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+        chartData: [1220, 1240, 1275, 1310, 1335, 1360, 1380]
+      },
+      "Tomato": {
+        rate: "₹2450",
+        forecast: "₹2100",
+        trendText: "↘ BEARISH (-14.2%)",
+        trendBg: "#fee2e2",
+        trendColor: "#dc2626",
+        confidence: "Confidence: 94%",
+        action: "LIQUIDATE TO BULK BUYER IMMEDIATELY",
+        actionGain: "Avoid 14.2% Post-Harvest Loss",
+        gainColor: "#dc2626",
+        chartLabels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+        chartData: [2450, 2400, 2320, 2250, 2180, 2130, 2100]
+      },
+      "Maize (Corn)": {
+        rate: "₹1820",
+        forecast: "₹1910",
+        trendText: "↗ STABLE (+4.9%)",
+        trendBg: "#e0f2fe",
+        trendColor: "#0284c7",
+        confidence: "Confidence: 85%",
+        action: "POOL WITH LOCAL FPO TRUCKLOAD",
+        actionGain: "+4.9% Net Margin",
+        gainColor: "#16a34a",
+        chartLabels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+        chartData: [1820, 1835, 1850, 1865, 1880, 1895, 1910]
+      }
     };
 
-    function showLiveToast(title, message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      if (!container) return;
+    let chartInstance = null;
 
-      const icons = {
-        success: 'fa-circle-check" style="color:#34d399;',
-        escrow: 'fa-shield-halved" style="color:#60a5fa;',
-        loan: 'fa-hand-holding-dollar" style="color:#fbbf24;',
-        warn: 'fa-triangle-exclamation" style="color:#f87171;'
-      };
-
-      const iconClass = icons[type] || icons.success;
-
-      const toast = document.createElement('div');
-      toast.className = `toast-card alert-${type}`;
-      toast.innerHTML = `
-        <i class="fa-solid ${iconClass}"></i>
-        <div style="flex:1;">
-          <strong style="display:block; color:#ffffff; font-size:0.88rem; margin-bottom:0.15rem;">${title}</strong>
-          <span style="color:#cbd5e1; line-height:1.35; font-size:0.82rem;">${message}</span>
-        </div>
-      `;
-
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.style.animation = 'toastSlideOut 0.3s forwards';
-        setTimeout(() => toast.remove(), 300);
-      }, 4500);
-    }
-
-    function toggleAuthMode(mode) {
-      document.getElementById('loginForm').style.display = mode === 'login' ? 'block' : 'none';
-      document.getElementById('registerForm').style.display = mode === 'register' ? 'block' : 'none';
-      document.getElementById('tabBtnLogin').classList.toggle('active', mode === 'login');
-      document.getElementById('tabBtnRegister').classList.toggle('active', mode !== 'login');
-    }
-
-    function populateDistricts() {
-      const state = document.getElementById('regState').value;
-      const distSelect = document.getElementById('regDistrict');
-      distSelect.innerHTML = '<option value="">-- Select District --</option>';
-      if (state && districtData[state]) {
-        districtData[state].forEach(d => {
-          const opt = document.createElement('option');
-          opt.value = d;
-          opt.innerText = d;
-          distSelect.appendChild(opt);
-        });
-      }
-    }
-
-    function switchTab(tab) {
-      const tabs = ['marketplace', 'proximity', 'pooling', 'logistics', 'finance', 'disputes', 'schemes'];
-      tabs.forEach(t => {
-        const el = document.getElementById(t + 'Tab');
-        if (el) el.style.display = 'none';
+    function initChart() {
+      const ctx = document.getElementById("trajectoryChart").getContext("2d");
+      const defaultData = FORECAST_INTEL["Rice (Dhan)"];
+      chartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: defaultData.chartLabels,
+          datasets: [{
+            label: "Projected Mandi Modal Price (₹/Qtl)",
+            data: defaultData.chartData,
+            borderColor: "#15803d",
+            backgroundColor: "rgba(21, 128, 61, 0.08)",
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2.5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { color: "#f1f5f9" } },
+            x: { grid: { display: false } }
+          }
+        }
       });
-
-      const activeEl = document.getElementById(tab + 'Tab');
-      if (activeEl) activeEl.style.display = 'block';
-
-      const btns = document.querySelectorAll('.nav-tabs .nav-btn');
-      btns.forEach(b => b.classList.remove('active'));
-      const activeBtn = document.getElementById(`tabBtn_${tab}`);
-      if (activeBtn) activeBtn.classList.add('active');
-
-      if (tab === 'proximity') {
-        setTimeout(() => { initMap(); runRadarScan(); }, 200);
-      } else if (tab === 'pooling') {
-        loadPools();
-      } else if (tab === 'schemes') {
-        loadGovtSchemes();
-      } else if (tab === 'marketplace') {
-        setTimeout(renderPriceAnalyticsCharts, 100);
-      }
     }
 
-    // --- Strict Role-Based Access Control (RBAC) ---
-    function applyRoleBasedUI(role) {
-      const btnMarket = document.getElementById('tabBtn_marketplace');
-      const btnRadar = document.getElementById('tabBtn_proximity');
-      const btnPool = document.getElementById('tabBtn_pooling');
-      const btnLogistics = document.getElementById('tabBtn_logistics');
-      const btnFinance = document.getElementById('tabBtn_finance');
-      const btnDisputes = document.getElementById('tabBtn_disputes');
-      const btnSchemes = document.getElementById('tabBtn_schemes');
+    function handleCropForecastChange(cropName) {
+      const data = FORECAST_INTEL[cropName] || FORECAST_INTEL["Rice (Dhan)"];
 
-      const allBtns = [btnMarket, btnRadar, btnPool, btnLogistics, btnFinance, btnDisputes, btnSchemes];
-      allBtns.forEach(b => { if (b) b.style.display = 'none'; });
-
-      if (role === 'Farmer') {
-        if (btnMarket) btnMarket.style.display = 'flex';
-        if (btnRadar) btnRadar.style.display = 'flex';
-        if (btnLogistics) btnLogistics.style.display = 'flex';
-        if (btnFinance) btnFinance.style.display = 'flex';
-        if (btnSchemes) btnSchemes.style.display = 'flex';
-
-        document.getElementById('farmerPanel').style.display = 'block';
-        document.getElementById('buyerPanel').style.display = 'none';
-        switchTab('marketplace');
-      } 
-      else if (role === 'FPO') {
-        if (btnPool) btnPool.style.display = 'flex';
-        if (btnRadar) btnRadar.style.display = 'flex';
-        if (btnLogistics) btnLogistics.style.display = 'flex';
-        if (btnSchemes) btnSchemes.style.display = 'flex';
-
-        document.getElementById('farmerPanel').style.display = 'none';
-        document.getElementById('buyerPanel').style.display = 'none';
-        switchTab('pooling');
-      } 
-      else if (role === 'Buyer') {
-        if (btnMarket) btnMarket.style.display = 'flex';
-        if (btnRadar) btnRadar.style.display = 'flex';
-        if (btnDisputes) btnDisputes.style.display = 'flex';
-        if (btnSchemes) btnSchemes.style.display = 'flex';
-
-        document.getElementById('farmerPanel').style.display = 'none';
-        document.getElementById('buyerPanel').style.display = 'block';
-        loadMarketLots();
-        switchTab('marketplace');
-      }
-    }
-
-    // --- Fast Role Demo Switcher ---
-    function quickSwitchRole(selectedRole) {
-      if (!user) {
-        user = {
-          id: `${selectedRole.toUpperCase()}-WB-2026`,
-          name: selectedRole === 'FPO' ? 'Dooars Farmers Producer Co.' : selectedRole === 'Buyer' ? 'Siliguri Agro Millers' : 'Ramesh Ghosh',
-          role: selectedRole,
-          state: 'West Bengal',
-          district: 'Jalpaiguri',
-          location: 'Jalpaiguri, West Bengal',
-          phone: '9883860358'
-        };
-      } else {
-        user.role = selectedRole;
-        user.id = `${selectedRole.toUpperCase()}-WB-2026`;
-        if (selectedRole === 'FPO') user.name = 'Dooars Farmers Producer Co.';
-        else if (selectedRole === 'Buyer') user.name = 'Siliguri Agro Millers';
-        else user.name = 'Ramesh Ghosh';
-      }
-
-      document.getElementById('authSection').style.display = 'none';
-      document.getElementById('appSection').style.display = 'block';
-      document.getElementById('userHeader').style.display = 'flex';
-
-      document.getElementById('userBadge').innerHTML = `
-        <span style="font-weight:700; color:#0f172a; font-size:0.9rem;">${user.name}</span> 
-        <span class="badge badge-escrow" style="margin-left:0.4rem;">${user.role}</span>
-      `;
-      document.getElementById('bannerUserName').innerText = `${user.name} (${user.role})`;
-      document.getElementById('bannerUserId').innerText = user.id;
-
-      applyRoleBasedUI(selectedRole);
-      showLiveToast('Role Switched', `Active dashboard updated to ${user.role} interface.`, 'success');
-    }
-
-    // --- OTP Authentication ---
-    async function requestOtp(mode) {
-      const phoneInput = mode === 'login' ? document.getElementById('loginPhone') : document.getElementById('regPhone');
-      const phone = phoneInput ? phoneInput.value.trim() : '';
+      // 1. Synchronize all 3 metric cards
+      document.getElementById("fcModalRate").textContent = data.rate;
+      document.getElementById("fcForecastRate").textContent = data.forecast;
+      document.getElementById("fcConfidence").textContent = data.confidence;
       
-      if (!phone || phone.length !== 10) {
-        showLiveToast('Input Error', 'Please enter a valid 10-digit mobile number.', 'warn');
-        return alert('Please enter a valid 10-digit mobile number.');
-      }
+      const badge = document.getElementById("fcTrendBadge");
+      badge.textContent = data.trendText;
+      badge.style.background = data.trendBg;
+      badge.style.color = data.trendColor;
 
-      try {
-        const res = await fetch('/api/auth/send-otp', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ phone })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          showLiveToast('Authentication Warning', data.error || 'Failed to dispatch OTP.', 'warn');
-          return alert(data.error || 'Failed to send OTP.');
-        }
+      const actionTitle = document.getElementById("fcActionTitle");
+      actionTitle.textContent = data.action;
+      actionTitle.style.color = data.trendColor;
 
-        if (mode === 'login') {
-          document.getElementById('loginOtpField').style.display = 'block';
-          document.getElementById('loginOtpHint').innerText = `Demo OTP: ${data.demoOtp}`;
-          document.getElementById('loginOtp').value = data.demoOtp;
-        } else {
-          document.getElementById('regOtpField').style.display = 'block';
-          document.getElementById('regOtpHint').innerText = `Demo OTP: ${data.demoOtp}`;
-          document.getElementById('regOtp').value = data.demoOtp;
-        }
+      const gain = document.getElementById("fcActionGain");
+      gain.textContent = data.actionGain;
+      gain.style.color = data.gainColor;
 
-        showLiveToast('SMS Gateway Simulated', `Dispatched 6-digit OTP (${data.demoOtp}) to +91 ${phone}`, 'success');
-      } catch (err) {
-        showLiveToast('Network Error', 'Could not reach backend OTP service.', 'warn');
+      // 2. Redraw Chart.js line
+      if (chartInstance) {
+        chartInstance.data.datasets[0].data = data.chartData;
+        chartInstance.data.datasets[0].borderColor = data.trendColor;
+        chartInstance.update();
       }
     }
 
-    async function submitOtpAuth(mode) {
-      const phone = mode === 'login' ? document.getElementById('loginPhone').value.trim() : document.getElementById('regPhone').value.trim();
-      const otp = mode === 'login' ? document.getElementById('loginOtp').value.trim() : document.getElementById('regOtp').value.trim();
-      
-      if (!otp || otp.length !== 6) {
-        showLiveToast('Validation Warning', 'Please enter the 6-digit OTP code.', 'warn');
-        return alert('Please enter the 6-digit OTP.');
-      }
-
-      const payload = {
-        phone,
-        otp,
-        mode,
-        name: mode === 'register' ? document.getElementById('regName').value.trim() : undefined,
-        role: mode === 'register' ? document.getElementById('regRole').value : undefined,
-        state: mode === 'register' ? document.getElementById('regState').value : undefined,
-        district: mode === 'register' ? document.getElementById('regDistrict').value : undefined
-      };
-
-      try {
-        const res = await fetch('/api/auth/verify-otp', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          showLiveToast('Authentication Failed', data.error || 'Invalid verification credentials.', 'warn');
-          return alert(data.error || 'OTP verification failed.');
-        }
-
-        user = data.user;
-        
-        const roleDropdown = document.getElementById('roleDemoSwitch');
-        if (roleDropdown) roleDropdown.value = user.role;
-
-        document.getElementById('authSection').style.display = 'none';
-        document.getElementById('appSection').style.display = 'block';
-        document.getElementById('userHeader').style.display = 'flex';
-        
-        document.getElementById('userBadge').innerHTML = `
-          <span style="font-weight:700; color:#0f172a; font-size:0.9rem;">${user.name}</span> 
-          <span class="badge badge-escrow" style="margin-left:0.4rem;">${user.role}</span>
-        `;
-        document.getElementById('bannerUserName').innerText = `${user.name} (${user.role})`;
-        document.getElementById('bannerUserLocation').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${user.location}`;
-        document.getElementById('bannerUserId').innerText = user.id;
-
-        applyRoleBasedUI(user.role);
-
-        loadWeatherAdvisory();
-        loadAIForecast();
-        loadGovtSchemes();
-
-        showLiveToast('Digital Identity Verified', `Welcome back, ${user.name}! Connected as ${user.role}.`, 'success');
-      } catch (err) {
-        showLiveToast('Connection Error', 'Failed to communicate with authentication gateway.', 'warn');
-      }
-    }
-
-    function logout() {
-      user = null;
-      document.getElementById('authSection').style.display = 'block';
-      document.getElementById('appSection').style.display = 'none';
-      document.getElementById('userHeader').style.display = 'none';
-      showLiveToast('Session Terminated', 'Signed out from UpajTantram.', 'warn');
-    }
-
-    // --- Weather & Price Analytics ---
-    async function loadWeatherAdvisory() {
-      const district = user ? user.district : 'Jalpaiguri';
-      const res = await fetch(`/api/advisory/weather?district=${district}`);
-      const data = await res.json();
-      document.getElementById('weatherDistrict').innerText = data.district;
-      document.getElementById('weatherTemp').innerText = data.temperature;
-      document.getElementById('weatherHum').innerText = data.humidity;
-      document.getElementById('weatherRain').innerText = data.rainfallProbability;
-      document.getElementById('weatherAdviceText').innerText = data.aiAdvisory;
-    }
-
-    async function loadAIForecast() {
-      const crop = document.getElementById('forecastCrop').value;
-      const res = await fetch(`/api/ai/price-forecast?crop=${crop}`);
-      const data = await res.json();
-      document.getElementById('fcCurrent').innerText = `₹${data.currentAvg}`;
-      document.getElementById('fc7d').innerText = `₹${data.forecast7d}`;
-      document.getElementById('fcTrend').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> ${data.trend}`;
-      document.getElementById('fcAction').innerText = data.action;
-
-      renderPriceAnalyticsCharts();
-    }
-
-    async function renderPriceAnalyticsCharts() {
-      const crop = document.getElementById('forecastCrop').value;
-      const c1 = document.getElementById('priceTrajectoryChart');
-      const c2 = document.getElementById('mandiSpreadChart');
-      if (!c1 || !c2) return;
-
-      try {
-        const res = await fetch(`/api/analytics/price-history?crop=${crop}`);
-        const data = await res.json();
-
-        if (priceChartInstance) priceChartInstance.destroy();
-        priceChartInstance = new Chart(c1.getContext('2d'), {
-          type: 'line',
-          data: {
-            labels: data.labels,
-            datasets: [
-              { label: 'Historical Rate', data: data.historical, borderColor: '#64748b', tension: 0.3, fill: true, backgroundColor: 'rgba(100,116,139,0.1)' },
-              { label: 'AI 14-Day Cone', data: data.forecast, borderColor: '#10b981', borderDash: [5,5], tension: 0.3, fill: true, backgroundColor: 'rgba(16,185,129,0.15)' }
-            ]
-          },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-        });
-
-        if (spreadChartInstance) spreadChartInstance.destroy();
-        spreadChartInstance = new Chart(c2.getContext('2d'), {
-          type: 'bar',
-          data: {
-            labels: data.mandiComparison.labels,
-            datasets: [{ label: 'Mandi Rate (₹/Qtl)', data: data.mandiComparison.rates, backgroundColor: ['#0d9488', '#10b981', '#0284c7', '#f59e0b'], borderRadius: 6 }]
-          },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
-      } catch (err) {
-        console.error("Chart load error:", err);
-      }
-    }
-
-    // --- Multilingual Voice Assistant ---
-    function toggleVoiceSpeech() {
-      isVoiceSpeechEnabled = !isVoiceSpeechEnabled;
-      document.getElementById('voiceToggleBtn').innerHTML = isVoiceSpeechEnabled ? '<i class="fa-solid fa-volume-high"></i> Voice ON' : '<i class="fa-solid fa-volume-xmark"></i> Voice OFF';
-      showLiveToast('Voice Synthesizer', isVoiceSpeechEnabled ? 'Voice Copilot enabled' : 'Voice Copilot muted', 'warn');
-    }
-
-    function speakText(text, lang = null) {
-      if (!isVoiceSpeechEnabled || !('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-
-      const clean = text.replace(/[*_#`]/g, '');
-      const utterance = new SpeechSynthesisUtterance(clean);
-
-      const currentLang = lang || document.getElementById('langSelector').value;
-      if (/[\u0980-\u09FF]/.test(clean) || currentLang === 'bn') {
-        utterance.lang = 'bn-IN';
-      } else if (/[\u0900-\u097F]/.test(clean) || currentLang === 'hi') {
-        utterance.lang = 'hi-IN';
-      } else {
-        utterance.lang = 'en-IN';
-      }
-
-      utterance.rate = 1.0;
-      window.speechSynthesis.speak(utterance);
-    }
-
-    function startVoiceRecognition() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) return alert("Speech recognition not supported in your browser.");
-      
-      const currentLang = document.getElementById('langSelector').value;
-      const r = new SR();
-      r.lang = currentLang === 'bn' ? 'bn-IN' : currentLang === 'hi' ? 'hi-IN' : 'en-IN';
-      
-      r.onresult = (e) => {
-        document.getElementById('chatInput').value = e.results[0][0].transcript;
-        sendChat();
-      };
-      r.start();
-      showLiveToast('Voice Input Active', `Listening in ${currentLang.toUpperCase()}...`, 'success');
-    }
-
-    async function sendChat() {
-      const input = document.getElementById('chatInput');
-      const msg = input.value.trim();
-      if (!msg) return;
-
-      const currentLang = document.getElementById('langSelector').value;
-      const box = document.getElementById('chatBox');
-      box.innerHTML += `<div class="chat-msg msg-user">${msg}</div>`;
-      input.value = '';
-      box.scrollTop = box.scrollHeight;
-
-      try {
-        const res = await fetch('/api/ai/chat', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            message: msg,
-            lang: currentLang,
-            userDistrict: user ? user.district : 'Jalpaiguri',
-            userRole: user ? user.role : 'Farmer'
-          })
-        });
-        const data = await res.json();
-        box.innerHTML += `<div class="chat-msg msg-ai">${data.reply}</div>`;
-        box.scrollTop = box.scrollHeight;
-        speakText(data.reply, data.detectedLang);
-      } catch (err) {
-        box.innerHTML += `<div class="chat-msg msg-ai" style="color:#ef4444;">⚠️ AI service momentarily unreachable.</div>`;
-      }
-    }
-
-    function askQuickPrompt(q) {
-      document.getElementById('chatInput').value = q;
-      sendChat();
-    }
-
-    // --- Robust Edge AI Computer Vision Engine with Defect Segmentation ---
-    async function previewAndRecognizeCrop(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const fileNameLower = (file.name || '').toLowerCase();
+    // ================= 2. EDGE-AI CHROMATIC ASSAYER =================
+    function processEdgeAssay(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
       const reader = new FileReader();
-
+      
       reader.onload = function(e) {
-        uploadedImageBase64 = e.target.result;
-        const imgElement = document.getElementById('cropImagePreview');
-        imgElement.src = uploadedImageBase64;
-        imgElement.style.display = 'block';
-        document.getElementById('photoPlaceholderText').style.display = 'none';
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.getElementById("assayCanvas");
+          const ctx = canvas.getContext("2d");
+          canvas.style.display = "block";
+          
+          const maxDim = 320;
+          let w = img.width, h = img.height;
+          if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          
+          canvas.width = w;
+          canvas.height = h;
+          ctx.drawImage(img, 0, 0, w, h);
 
-        imgElement.onload = () => {
-          const sampleSize = 160;
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          canvas.width = sampleSize;
-          canvas.height = sampleSize;
-          ctx.drawImage(imgElement, 0, 0, sampleSize, sampleSize);
+          // Image matrix pixel parsing
+          const imgData = ctx.getImageData(0, 0, w, h);
+          const pixels = imgData.data;
+          let totalProducePixels = 0, defectPixels = 0;
 
-          const imgData = ctx.getImageData(0, 0, sampleSize, sampleSize);
-          const data = imgData.data;
-
-          let validPixels = 0;
-          let redCount = 0, yellowCount = 0, brownCount = 0, grainWhiteCount = 0;
-          let rotDefectPixels = 0;
-
-          for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const brightness = (r + g + b) / 3;
-
-            // Reject excessive specular highlight (>245) or absolute shadow (<20)
-            if (brightness > 245 || brightness < 20) continue;
-
-            validPixels++;
-
-            // Defect extraction: necrosis, dark blight, and fungal lesions
-            const isDarkRot = brightness < 60 && (r < 75 && g < 75);
-            const isBlightSpot = (r > 40 && r < 100) && (g < 60) && (b < 50) && (r > g * 1.3);
-
-            if (isDarkRot || isBlightSpot) {
-              rotDefectPixels++;
-            }
-
-            // Chromatic signatures
-            if (r > 130 && r > g * 1.35 && r > b * 1.5) {
-              redCount++; // Tomato
-            } else if (r > 150 && g > 130 && b < 100 && (r - b > 50)) {
-              yellowCount++; // Maize
-            } else if (brightness > 165 && Math.abs(r - g) < 25 && (r - b) > 10 && (r - b) < 55) {
-              grainWhiteCount++; // Rice
-            } else if (r > 100 && g > 80 && b < 100 && r > b) {
-              brownCount++; // Potato
+          for (let i = 0; i < pixels.length; i += 4) {
+            const r = pixels[i], g = pixels[i + 1], b = pixels[i + 2];
+            // Produce segmentation heuristic
+            if ((r > 80 && g > 60) || (r > 120 && b < 100)) {
+              totalProducePixels++;
+              // Necrotic decay detection (dark spot density)
+              if (r < 75 && g < 65 && b < 50) {
+                defectPixels++;
+                // Mark defect pixel on canvas preview (red tint)
+                pixels[i] = 220; pixels[i + 1] = 38; pixels[i + 2] = 38;
+              }
             }
           }
+          ctx.putImageData(imgData, 0, 0);
 
-          if (validPixels === 0) validPixels = 1;
+          const defectRate = totalProducePixels > 0 ? ((defectPixels / totalProducePixels) * 100).toFixed(1) : 1.8;
+          document.getElementById("diagCrop").textContent = file.name.toLowerCase().includes("tom") ? "Tomato (Hybrid)" : "Potato (Kufri Jyoti)";
+          document.getElementById("diagDefect").textContent = `${defectRate}%`;
+          
+          let grade = "Grade A (Premium)";
+          let val = "₹1,320 / Qtl";
+          if (defectRate > 10) { grade = "Grade C (Distress/Processing)"; val = "₹850 / Qtl"; }
+          else if (defectRate > 4) { grade = "Grade B (Standard)"; val = "₹1,150 / Qtl"; }
 
-          let detectedCrop = 'Potato';
-          let confidence = 91.5;
-
-          const redRatio = redCount / validPixels;
-          const yellowRatio = yellowCount / validPixels;
-          const grainRatio = grainWhiteCount / validPixels;
-          const brownRatio = brownCount / validPixels;
-
-          if (redRatio > 0.22) {
-            detectedCrop = 'Tomato';
-            confidence = Math.min(99.1, (redRatio * 180).toFixed(1));
-          } else if (yellowRatio > 0.25) {
-            detectedCrop = 'Maize';
-            confidence = Math.min(98.4, (yellowRatio * 160).toFixed(1));
-          } else if (grainRatio > 0.35) {
-            detectedCrop = 'Rice';
-            confidence = Math.min(97.8, (grainRatio * 150).toFixed(1));
-          } else if (brownRatio > 0.20) {
-            detectedCrop = 'Potato';
-            confidence = Math.min(98.6, (brownRatio * 170).toFixed(1));
-          } else {
-            if (fileNameLower.includes('tomato') || fileNameLower.includes('tamatar')) detectedCrop = 'Tomato';
-            else if (fileNameLower.includes('rice') || fileNameLower.includes('dhan') || fileNameLower.includes('paddy')) detectedCrop = 'Rice';
-            else if (fileNameLower.includes('maize') || fileNameLower.includes('corn') || fileNameLower.includes('makka')) detectedCrop = 'Maize';
-            else detectedCrop = 'Potato';
-            confidence = 94.0;
-          }
-
-          const defectPercentage = (rotDefectPixels / validPixels) * 100;
-          let assignedGrade = 'Grade A (Assayed)';
-          let conditionText = 'Healthy / Fresh (Moisture: ~14.2%)';
-          let healthScore = 95;
-          let alertColor = 'success';
-
-          if (defectPercentage >= 12.0) {
-            assignedGrade = 'Grade B (Standard)';
-            conditionText = `Severe Rot / Blight Detected (${defectPercentage.toFixed(1)}% necrosis)`;
-            healthScore = Math.max(48, Math.round(100 - defectPercentage * 3.2));
-            alertColor = 'warn';
-          } else if (defectPercentage >= 4.5) {
-            assignedGrade = 'Grade B (Standard)';
-            conditionText = `Surface Spotting & Spoilage Signs (${defectPercentage.toFixed(1)}% blemishes)`;
-            healthScore = Math.max(68, Math.round(100 - defectPercentage * 2.5));
-            alertColor = 'warn';
-          } else {
-            assignedGrade = 'Grade A (Assayed)';
-            conditionText = `Prime Quality • Moisture within tolerance (${defectPercentage.toFixed(1)}% blemish)`;
-            healthScore = Math.max(88, Math.round(100 - defectPercentage * 1.8));
-            alertColor = 'success';
-          }
-
-          const cropSelect = document.getElementById('newLotCrop');
-          for (let i = 0; i < cropSelect.options.length; i++) {
-            if (cropSelect.options[i].value.toLowerCase() === detectedCrop.toLowerCase()) {
-              cropSelect.selectedIndex = i;
-              break;
-            }
-          }
-
-          const gradeSelect = document.getElementById('newLotGrade');
-          for (let i = 0; i < gradeSelect.options.length; i++) {
-            if (gradeSelect.options[i].value.includes(assignedGrade.includes('Grade A') ? 'Grade A' : 'Grade B')) {
-              gradeSelect.selectedIndex = i;
-              break;
-            }
-          }
-
-          const resBox = document.getElementById('aiRecognitionResult');
-          resBox.style.display = 'block';
-          if (alertColor === 'warn') {
-            resBox.style.background = '#fef2f2';
-            resBox.style.borderColor = '#fecaca';
-            resBox.style.color = '#991b1b';
-          } else {
-            resBox.style.background = '#f0fdf4';
-            resBox.style.borderColor = '#bbf7d0';
-            resBox.style.color = '#065f46';
-          }
-
-          document.getElementById('detectedCropName').innerText = detectedCrop;
-          document.getElementById('detectedConf').innerText = `${confidence}%`;
-          document.getElementById('detectedGrade').innerText = `${assignedGrade} • ${conditionText} [Health: ${healthScore}%]`;
-
-          showLiveToast(
-            `AI Assayed: ${detectedCrop}`,
-            `Condition: ${conditionText} | ${assignedGrade}`,
-            alertColor
-          );
+          document.getElementById("diagGrade").textContent = grade;
+          document.getElementById("diagValuation").textContent = val;
+          document.getElementById("btnGenCert").disabled = false;
         };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    async function handleCreateLot(e) {
-      e.preventDefault();
-      const crop = document.getElementById('newLotCrop').value;
-      const grade = document.getElementById('newLotGrade').value;
-      const qty = Number(document.getElementById('newLotQty').value);
-      const price = Number(document.getElementById('newLotPrice').value);
-
-      const payload = {
-        farmerId: user.id,
-        farmerName: user.name,
-        farmerPhone: user.phone,
-        crop,
-        grade,
-        quantity: qty,
-        expectedPrice: price,
-        location: user.location,
-        photoUrl: uploadedImageBase64 || 'https://via.placeholder.com/80?text=No+Photo'
-      };
-
-      const res = await fetch('/api/lots/create', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-      const data = await res.json();
-
-      document.getElementById('publishResultsSection').style.display = 'block';
-      document.getElementById('publishLocationText').innerHTML = `Matched buyers and storages near <strong>${user.district}</strong>:`;
-
-      const bRes = await fetch(`/api/proximity/buyers?district=${user.district}&crop=${crop}&maxDistance=50`);
-      const buyers = await bRes.json();
-      document.getElementById('quickBuyerMatches').innerHTML = buyers.map(b => `
-        <div style="background:#f8fafc; border:1px solid var(--border); padding:0.6rem 0.8rem; border-radius:6px; margin-bottom:0.4rem; display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">
-          <div><strong>${b.name}</strong> (📍 ${b.distanceKm} km away)</div>
-          <div><strong style="color:#059669;">₹${b.buyingRate}/Qtl</strong> <button style="background:#0284c7; color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; margin-left:0.5rem; cursor:pointer;" onclick="alert('Trade offer accepted!')">Accept</button></div>
-        </div>
-      `).join('') || '<p style="color:#64748b; font-size:0.8rem;">No immediate buyer match.</p>';
-
-      const sRes = await fetch(`/api/proximity/storages?district=${user.district}&crop=${crop}&maxDistance=50`);
-      const storages = await sRes.json();
-      document.getElementById('quickStorageMatches').innerHTML = storages.map(s => `
-        <div style="background:#f8fafc; border:1px solid var(--border); padding:0.6rem 0.8rem; border-radius:6px; margin-bottom:0.4rem; display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">
-          <div><strong>${s.name}</strong> (${s.distanceKm} km) • Avail: ${s.capacityAvailable}</div>
-          <div><strong>₹${s.dailyRatePerQtl.toFixed(2)}/day</strong> <button style="background:var(--storage-teal); color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; margin-left:0.5rem; cursor:pointer;" onclick="alert('Slot booked!')">Book</button></div>
-        </div>
-      `).join('') || '<p style="color:#64748b; font-size:0.8rem;">No storage found.</p>';
-
-      showLiveToast('Marketplace Lot Published', `Lot ${data.lot.lotId} published with active assay verification.`, 'success');
+    // ================= 3. ESCROW PAYMENT WORKFLOW =================
+    function triggerEscrowPay(lotId, amount) {
+      document.getElementById("modalLotId").textContent = lotId;
+      document.getElementById("modalAmount").textContent = `₹${amount.toLocaleString("en-IN")}`;
+      document.getElementById("escrowModal").style.display = "flex";
+    }
+    function closeEscrowModal() {
+      alert("✅ UTR Received via Dynamic UPI Rail. Funds are securely locked in the RBI Nodal Escrow account.");
+      document.getElementById("escrowModal").style.display = "none";
     }
 
-    async function loadMarketLots() {
-      const tbody = document.getElementById('lotsTableBody');
-      if (!tbody) return;
+    function openCertModal() {
+      window.open("/api/assay/certificate-sample", "_blank");
+    }
 
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:1rem; color:#64748b;">Loading marketplace lots...</td></tr>';
-      try {
-        const res = await fetch('/api/lots');
-        const lots = await res.json();
-        const active = (lots || []).filter(l => l.status === 'ACTIVE' || !l.status);
+    // ================= 4. VERNACULAR VOICE & BOT LOGIC =================
+    function handleVoiceQuery() {
+      const input = document.getElementById("voicePromptInput");
+      const val = input.value.trim();
+      if (!val) return;
 
-        if (active.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:1.5rem; color:#94a3b8;">No active farmer lots found. Publish one via a Farmer account!</td></tr>';
-          return;
+      const chat = document.getElementById("chatWindow");
+      chat.innerHTML += `<div style="background:#f1f5f9; padding:8px 12px; border-radius:6px; align-self:flex-end; font-weight:600;">${val}</div>`;
+      input.value = "";
+
+      setTimeout(() => {
+        let reply = "Based on regional APMC data and high moisture forecasts, moving produce to cold storage yields a projected +12% price upside within 7 days.";
+        if (val.includes("বাংলা") || val.includes("কোথায়") || val.includes("আলু")) {
+          reply = "আলুর বর্তমান বাজারদর কিছুটা নিম্নমুখী। বৃষ্টিপাতের সম্ভাবনা থাকায় মালটি স্থানীয় হিমঘরে রাখলে ৭ দিনে লাভ বেশি পাওয়া যাবে।";
+        } else if (val.includes("dam") || val.includes("price") || val.includes("rate")) {
+          reply = "Current Modal mandi rate in Jalpaiguri is ₹1,220/Qtl for Potato and ₹1,540/Qtl for Rice with bullish 7-day indicators.";
         }
-
-        tbody.innerHTML = active.map(l => {
-          const totalVal = (Number(l.expectedPrice) || 0) * (Number(l.quantity) || 0);
-          const cleanPhone = (l.farmerPhone || '9876543210').replace(/[^0-9]/g, '');
-          const waUrl = `https://wa.me/91${cleanPhone}?text=Inquiring%20about%20lot%20${l.lotId}%20on%20UpajTantram`;
-          const photo = l.photoUrl && l.photoUrl.startsWith('data:image') ? l.photoUrl : 'https://via.placeholder.com/48?text=Crop';
-
-          return `
-            <tr>
-              <td><img src="${photo}" class="crop-thumbnail" alt="Crop" /></td>
-              <td><strong>${l.lotId}</strong><br><a href="/api/assay/certificate/${l.lotId}" target="_blank" style="font-size:0.75rem; color:#059669; font-weight:700;">Assay Cert</a></td>
-              <td>${l.farmerName || 'Farmer'}<br><a href="${waUrl}" target="_blank" style="font-size:0.75rem; color:#25d366; font-weight:700;">Chat WhatsApp</a></td>
-              <td>${l.crop} (${l.grade || 'Grade A'})</td>
-              <td>${l.quantity} Qtl</td>
-              <td><strong>₹${totalVal.toLocaleString()}</strong></td>
-              <td><button class="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem; width:auto;" onclick="openUpiEscrowModal('${l.lotId}', ${l.expectedPrice}, ${l.quantity})">Pay UPI</button></td>
-            </tr>
-          `;
-        }).join('');
-      } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:1rem; color:#ef4444;">Failed to load lots.</td></tr>';
-      }
+        chat.innerHTML += `<div style="background:#ffffff; padding:10px; border-radius:8px; border-left:3px solid var(--primary); max-width:85%;">🤖 ${reply}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+      }, 400);
     }
 
-    // --- UPI Modal ---
-    async function openUpiEscrowModal(lotId, bidPrice, quantity) {
-      const amount = bidPrice * quantity;
-      pendingEscrowTrade = { lotId, bidPrice, quantity };
-
-      const res = await fetch('/api/payments/generate-upi-qr', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ amount, lotId, buyerName: user ? user.name : 'Buyer' })
-      });
-      const data = await res.json();
-      document.getElementById('upiQrImg').src = data.qrDataUrl;
-      document.getElementById('upiAmountText').innerText = `₹${amount.toLocaleString()}`;
-      document.getElementById('mockUtrText').innerText = data.mockUtr;
-      document.getElementById('upiModal').style.display = 'flex';
-
-      showLiveToast('UPI Intent Generated', `Ready to lock ₹${amount.toLocaleString()} into Escrow VPA: ${data.vpa}`, 'escrow');
-    }
-
-    function closeUpiModal() {
-      document.getElementById('upiModal').style.display = 'none';
-      pendingEscrowTrade = null;
-    }
-
-    async function confirmUpiDeposit() {
-      if (!pendingEscrowTrade) return;
-      const { lotId, bidPrice, quantity } = pendingEscrowTrade;
-      const res = await fetch('/api/trade/escrow-lock', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ lotId, buyerId: user.id, buyerName: user.name, bidPrice })
-      });
-      const data = await res.json();
-      closeUpiModal();
-      loadMarketLots();
-
-      showLiveToast('RBI Nodal Escrow Locked', `₹${(bidPrice * quantity).toLocaleString()} secured for Lot ${lotId}. Trans ID: ${data.transaction.txId}`, 'escrow');
-    }
-
-    // --- Proximity Radar ---
-    function initMap(lat = 26.54, lng = 88.72) {
-      const mapContainer = document.getElementById('radarMap');
-      if (!mapContainer) return;
-      if (!mapInstance) {
-        mapInstance = L.map('radarMap').setView([lat, lng], 10);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(mapInstance);
-      } else {
-        mapInstance.invalidateSize();
-        mapInstance.setView([lat, lng], 10);
-      }
-    }
-
-    function detectGPSLocation() {
-      if (!navigator.geolocation) return alert("Geolocation not supported.");
-      navigator.geolocation.getCurrentPosition((pos) => {
-        currentCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        initMap(currentCoords.lat, currentCoords.lng);
-        L.marker([currentCoords.lat, currentCoords.lng]).addTo(mapInstance).bindPopup("📍 Your Location").openPopup();
-        runRadarScan();
-        showLiveToast('GPS Calibrated', `Synchronized coordinates: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`, 'success');
-      }, () => runRadarScan());
-    }
-
-    async function runRadarScan() {
-      const district = document.getElementById('radarDistrict').value;
-      const crop = document.getElementById('radarCrop').value;
-      const maxDistance = document.getElementById('radarRadius').value;
-
-      let q = `district=${encodeURIComponent(district)}&crop=${encodeURIComponent(crop)}&maxDistance=${maxDistance}`;
-      if (currentCoords) q += `&lat=${currentCoords.lat}&lng=${currentCoords.lng}`;
-
-      initMap();
-      mapMarkers.forEach(m => mapInstance.removeLayer(m));
-      mapMarkers = [];
-
-      const sRes = await fetch(`/api/proximity/storages?${q}`);
-      const storages = await sRes.json();
-      document.getElementById('storageCountBadge').innerText = storages.length;
-      document.getElementById('radarStorageResults').innerHTML = storages.map(s => {
-        if (s.lat && s.lng && mapInstance) mapMarkers.push(L.marker([s.lat, s.lng]).addTo(mapInstance).bindPopup(`🏬 <b>${s.name}</b><br>${s.distanceKm} km`));
-        return `<div class="storage-card" style="margin-bottom:0.6rem; padding:0.8rem;"><div style="display:flex; justify-content:space-between;"><strong>${s.name}</strong><span class="badge badge-dist">${s.distanceKm} km</span></div><div style="font-size:0.82rem; margin:0.3rem 0;">₹${s.dailyRatePerQtl.toFixed(2)}/Qtl/day | Space: ${s.capacityAvailable}</div><button style="background:var(--storage-teal); color:white; border:none; padding:0.25rem 0.6rem; border-radius:4px; font-size:0.75rem; cursor:pointer;" onclick="alert('Slot booked!')">Book</button></div>`;
-      }).join('') || '<p style="padding:0.8rem; color:#64748b;">No storages found.</p>';
-
-      const bRes = await fetch(`/api/proximity/buyers?${q}`);
-      const buyers = await bRes.json();
-      document.getElementById('buyerCountBadge').innerText = buyers.length;
-      document.getElementById('radarBuyerResults').innerHTML = buyers.map(b => {
-        if (b.lat && b.lng && mapInstance) mapMarkers.push(L.marker([b.lat, b.lng]).addTo(mapInstance).bindPopup(`🏢 <b>${b.name}</b><br>${b.distanceKm} km`));
-        return `<div class="storage-card" style="margin-bottom:0.6rem; padding:0.8rem; border-left:4px solid #0284c7;"><div style="display:flex; justify-content:space-between;"><strong>${b.name}</strong><span class="badge badge-dist">${b.distanceKm} km</span></div><div style="font-size:0.82rem; margin:0.3rem 0;">₹${b.buyingRate}/Qtl for ${b.crop}</div><button style="background:#0284c7; color:white; border:none; padding:0.25rem 0.6rem; border-radius:4px; font-size:0.75rem; cursor:pointer;" onclick="alert('Initiated!')">Trade</button></div>`;
-      }).join('') || '<p style="padding:0.8rem; color:#64748b;">No buyers found.</p>';
-    }
-
-    // --- FPO Pooling, Logistics, Loans, Disputes ---
-    async function loadPools() {
-      const res = await fetch('/api/fpo/pools');
-      const pools = await res.json();
-      document.getElementById('activePoolsList').innerHTML = pools.map(p => `
-        <div class="storage-card" style="margin-bottom:0.8rem;">
-          <div style="display:flex; justify-content:space-between;"><strong>${p.poolId} (${p.crop})</strong><span class="badge badge-bullish">${p.status}</span></div>
-          <p style="font-size:0.85rem; margin:0.4rem 0;">Progress: <strong>${p.currentQuantity} / ${p.targetQuantity} Qtl</strong> | Target: ₹${p.targetPrice}/Qtl</p>
-          <div style="display:flex; gap:0.4rem;">
-            <input type="number" id="contribQty_${p.poolId}" placeholder="Quintals" style="width:120px; padding:0.3rem;" />
-            <button style="background:var(--primary); color:white; border:none; padding:0.3rem 0.6rem; border-radius:6px; font-size:0.8rem; cursor:pointer;" onclick="contributeToPool('${p.poolId}')">Add</button>
-          </div>
-        </div>
-      `).join('') || '<p style="color:#64748b;">No open pools.</p>';
-    }
-
-    async function handleCreatePool(e) {
-      e.preventDefault();
-      const res = await fetch('/api/fpo/create-pool', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ crop: document.getElementById('poolCrop').value, targetQuantity: document.getElementById('poolTargetQty').value, targetPrice: document.getElementById('poolPrice').value, district: user ? user.district : 'Jalpaiguri' })
-      });
-      const data = await res.json();
-      loadPools();
-      showLiveToast('FPO Aggregation', `Opened wholesale pool ${data.poolId} for target volume.`, 'success');
-    }
-
-    async function contributeToPool(poolId) {
-      const qty = document.getElementById(`contribQty_${poolId}`).value;
-      if (!qty || Number(qty) <= 0) return alert("Enter quantity");
-      await fetch('/api/fpo/contribute', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ poolId, farmerId: user.id, farmerName: user.name, quantity: qty })
-      });
-      loadPools();
-      showLiveToast('Lot Aggregated', `Added ${qty} Quintals to community pool ${poolId}.`, 'success');
-    }
-
-    function updateEstimatedFreight() {
-      const v = document.getElementById('vehicleType').value;
-      const km = Number(document.getElementById('estKm').value || 30);
-      const rate = v.includes('1.5T') ? 20 : v.includes('4T') ? 32 : 50;
-      document.getElementById('estFreightDisplay').innerText = `₹${Math.round(km * rate + 500)}`;
-    }
-
-    async function handleBookTruck(e) {
-      e.preventDefault();
-      const res = await fetch('/api/logistics/book', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ pickupDistrict: document.getElementById('pickupDist').value, destinationMandi: document.getElementById('dropMandi').value, vehicleType: document.getElementById('vehicleType').value, distanceKm: document.getElementById('estKm').value })
-      });
-      const data = await res.json();
-      const box = document.getElementById('truckBookingResult');
-      box.style.display = 'block';
-      box.innerHTML = `<strong>Booking Confirmed!</strong> ID: <b>${data.bookingId}</b> | Total Freight: <b>₹${data.estimatedFreight}</b> | Driver: <b>${data.driverPhone}</b>`;
-      showLiveToast('Haulage Dispatch', `Truck ${data.bookingId} assigned. Driver: ${data.driverPhone}`, 'success');
-    }
-
-    function recalcLoan() {
-      const tot = (Number(document.getElementById('loanQty').value) || 0) * (Number(document.getElementById('loanMandiRate').value) || 0);
-      document.getElementById('loanTotalVal').innerText = `₹${tot.toLocaleString()}`;
-      document.getElementById('loanSanctionVal').innerText = `₹${Math.round(tot * 0.7).toLocaleString()}`;
-    }
-
-    async function handleApplyLoan(e) {
-      e.preventDefault();
-      const res = await fetch('/api/finance/pledge-loan', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ farmerId: user ? user.id : 'FARM-DEMO', storageId: document.getElementById('loanStorageId').value, crop: document.getElementById('loanCrop').value, quantity: document.getElementById('loanQty').value, marketRate: document.getElementById('loanMandiRate').value })
-      });
-      const d = await res.json();
-      const b = document.getElementById('loanResultBox');
-      b.style.display = 'block';
-      b.innerHTML = `<strong>Loan Sanctioned!</strong> ID: <b>${d.loanId}</b> | Disbursed: <b style="color:#059669;">₹${d.sanctionedAmount.toLocaleString()}</b> (70% LTV)`;
-      showLiveToast('e-NWR Advance Disbursed', `₹${d.sanctionedAmount.toLocaleString()} credited to Farmer bank account (70% LTV).`, 'loan');
-    }
-
-    async function handleRaiseDispute(e) {
-      e.preventDefault();
-      const res = await fetch('/api/disputes/raise', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ txId: document.getElementById('dispTxId').value, raisedBy: user ? user.name : 'Authorized Party', reason: document.getElementById('dispReason').value, evidenceNotes: document.getElementById('dispNotes').value })
-      });
-      const d = await res.json();
-      const b = document.getElementById('disputeResultBox');
-      b.style.display = 'block';
-      b.innerHTML = `<strong>Dispute Recorded (${d.disputeId})</strong><br>${d.message}`;
-      showLiveToast('Escrow Payout Paused', `Dispute filed for TXN. Arbitrage review initiated.`, 'warn');
-    }
-
-    // --- Government Schemes Directory Loader ---
-    async function loadGovtSchemes() {
-      try {
-        const res = await fetch('/api/schemes');
-        allSchemesData = await res.json();
-        renderSchemes(allSchemesData);
-      } catch (err) {
-        console.error('Failed to load schemes:', err);
-      }
-    }
-
-    function renderSchemes(schemes) {
-      const container = document.getElementById('schemesListContainer');
-      if (!container) return;
-
-      if (!schemes || schemes.length === 0) {
-        container.innerHTML = '<p style="color:#64748b; grid-column:span 2; padding:1.5rem; text-align:center;">No matching schemes found.</p>';
+    function triggerMic() {
+      if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+        alert("Speech API not supported on this browser. Please type your query.");
         return;
       }
-
-      container.innerHTML = schemes.map(s => `
-        <div style="border:1px solid #e2e8f0; background:#ffffff; border-radius:12px; padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 2px 4px rgba(0,0,0,0.04);">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem; gap:0.5rem;">
-              <h4 style="color:#1e40af; font-size:1rem; font-weight:700;">${s.name}</h4>
-              <span class="badge badge-scheme" style="font-size:0.7rem; white-space:nowrap;">${s.category}</span>
-            </div>
-            <small style="color:#64748b; display:block; margin-bottom:0.75rem; font-weight:600;"><i class="fa-solid fa-landmark"></i> ${s.ministry}</small>
-            <p style="font-size:0.85rem; color:#334155; margin-bottom:0.75rem; line-height:1.45;"><strong>Benefit:</strong> ${s.benefit}</p>
-            <p style="font-size:0.82rem; color:#64748b; margin-bottom:1rem; line-height:1.4;"><strong>Eligibility:</strong> ${s.eligibility}</p>
-          </div>
-          <div>
-            <a href="${s.officialUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; background:#2563eb; color:white; text-decoration:none; padding:0.55rem 1rem; border-radius:8px; font-size:0.82rem; font-weight:700; width:100%; text-align:center;">
-              Visit Official Portal <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i>
-            </a>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function filterSchemes() {
-      const q = (document.getElementById('schemeSearchInput').value || '').toLowerCase();
-      const cat = document.getElementById('schemeCategoryFilter').value;
-      const filtered = allSchemesData.filter(s => {
-        const matchQ = s.name.toLowerCase().includes(q) || s.benefit.toLowerCase().includes(q);
-        const matchCat = cat === 'All' || s.category.toLowerCase().includes(cat.toLowerCase());
-        return matchQ && matchCat;
-      });
-      renderSchemes(filtered);
-    }
-
-    function changeLanguage(lang) {
-      const map = {
-        en: { trade: "Trade & Vision", radar: "Location Radar", pool: "FPO Pooling", truck: "Book Truck", loan: "Storage Loans", disp: "Grievances", govt: "Govt Schemes" },
-        bn: { trade: "ফসল বিক্রি ও যাচাই", radar: "লোকাল রাডার", pool: "দলগত চাষি পুল", truck: "গাড়ি বুকিং", loan: "হিমাগার লোন", disp: "অভিযোগ সমাধান", govt: "সরকারি প্রকল্প" },
-        hi: { trade: "फसल व्यापार व विज़न", radar: "लोकल रडार", pool: "एफपीओ समूह बिक्री", truck: "ट्रक बुकिंग", loan: "भंडारण ऋण", disp: "शिकायत निवारण", govt: "सरकारी योजनाएं" }
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognizer = new SpeechRecognition();
+      recognizer.lang = "en-IN";
+      recognizer.onresult = function(e) {
+        document.getElementById("voicePromptInput").value = e.results[0][0].transcript;
+        handleVoiceQuery();
       };
-      const d = map[lang] || map.en;
-      const b0 = document.getElementById('tabBtn_marketplace');
-      const b1 = document.getElementById('tabBtn_proximity');
-      const b2 = document.getElementById('tabBtn_pooling');
-      const b3 = document.getElementById('tabBtn_logistics');
-      const b4 = document.getElementById('tabBtn_finance');
-      const b5 = document.getElementById('tabBtn_disputes');
-      const b6 = document.getElementById('tabBtn_schemes');
-
-      if (b0) b0.innerHTML = `<i class="fa-solid fa-chart-line"></i> ${d.trade}`;
-      if (b1) b1.innerHTML = `<i class="fa-solid fa-location-crosshairs"></i> ${d.radar}`;
-      if (b2) b2.innerHTML = `<i class="fa-solid fa-people-group"></i> ${d.pool}`;
-      if (b3) b3.innerHTML = `<i class="fa-solid fa-truck-fast"></i> ${d.truck}`;
-      if (b4) b4.innerHTML = `<i class="fa-solid fa-hand-holding-dollar"></i> ${d.loan}`;
-      if (b5) b5.innerHTML = `<i class="fa-solid fa-scale-balanced"></i> ${d.disp}`;
-      if (b6) b6.innerHTML = `<i class="fa-solid fa-building-columns"></i> ${d.govt}`;
-
-      const promptContainer = document.getElementById('quickPromptRow');
-      if (promptContainer) {
-        if (lang === 'bn') {
-          promptContainer.innerHTML = `
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('কাছের হিমাগার কোথায়?')">🏬 হিমাগার</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('আবহাওয়ার ঝুঁকি কি?')">⚠️ আবহাওয়া</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('হিমাগারে রেখে লোন কিভাবে পাব?')">💳 লোন</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('আজকের বাজার দর কত?')">📈 বাজার দর</button>
-          `;
-        } else if (lang === 'hi') {
-          promptContainer.innerHTML = `
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('पास का कोल्ड स्टोरेज कहां है?')">🏬 कोल्ड स्टोरेज</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('मौसम का जोखिम क्या है?')">⚠️ मौसम जोखिम</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('भंडारण पर लोन कैसे मिलेगा?')">💳 लोन सुविधा</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('आज का मंडी भाव क्या है?')">📈 मंडी भाव</button>
-          `;
-        } else {
-          promptContainer.innerHTML = `
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('Where is the nearest cold storage?')">🏬 Storages</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('Check weather rot risk')">⚠️ Weather Risk</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('How does e-NWR storage loan work?')">💳 Storage Loan</button>
-            <button style="font-size:0.7rem; padding:0.25rem 0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; cursor:pointer;" onclick="askQuickPrompt('What are the mandi rates today?')">📈 Mandi Rates</button>
-          `;
-        }
-      }
+      recognizer.start();
     }
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration error:', err));
-      });
+    function toggleSpeech() {
+      alert("Voice feedback preference updated.");
     }
+
+    function switchRole(role) {
+      console.log("Switching RBAC Persona to: " + role);
+    }
+
+    // Initialize chart on page load
+    window.onload = initChart;
   </script>
 </body>
 </html>
