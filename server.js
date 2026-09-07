@@ -17,7 +17,59 @@ const lots = [];
 const pools = [];
 const transactions = [];
 
-// Multi-District Cold Storage Network (Punjab, West Bengal, Bihar, UP)
+// Multi-District Weather & Micro-Climate Telemetry
+const DISTRICT_WEATHER_DATA = {
+  "Jalpaiguri": {
+    temperature: "29°C",
+    humidity: "86%",
+    rainfallProbability: "75% (Critical)",
+    riskLevel: "HIGH RISK",
+    riskBadgeClass: "badge-alert",
+    advisory: "Elevated monsoon moisture in Jalpaiguri. Open-air farm storage is highly susceptible to fungal blight and tuber rot. Transfer harvested lots to accredited cold stores immediately."
+  },
+  "Amritsar": {
+    temperature: "31°C",
+    humidity: "58%",
+    rainfallProbability: "20% (Low)",
+    riskLevel: "MODERATE RISK",
+    riskBadgeClass: "badge-storage",
+    advisory: "Dry and warm conditions prevailing across Amritsar. Spoilage risk is low, but ensure well-ventilated dry storage to avoid heat shriveling in grain and tuber lots."
+  },
+  "Ludhiana": {
+    temperature: "32°C",
+    humidity: "54%",
+    rainfallProbability: "15% (Low)",
+    riskLevel: "LOW RISK",
+    riskBadgeClass: "badge-bullish",
+    advisory: "Optimal dry harvest weather in Ludhiana. Ideal window for sun-drying grains before warehouse bagging."
+  },
+  "Darjeeling": {
+    temperature: "19°C",
+    humidity: "92%",
+    rainfallProbability: "85% (Critical)",
+    riskLevel: "CRITICAL RISK",
+    riskBadgeClass: "badge-alert",
+    advisory: "Dense cloud cover and near-saturated humidity in Darjeeling. Immediate cold chain transit required for tomato and perishable crops to prevent mold."
+  },
+  "Patna": {
+    temperature: "33°C",
+    humidity: "70%",
+    rainfallProbability: "45% (Moderate)",
+    riskLevel: "MODERATE RISK",
+    riskBadgeClass: "badge-storage",
+    advisory: "Humid conditions across Patna. Monitor paddy moisture levels closely before bulk bagging."
+  },
+  "Varanasi": {
+    temperature: "34°C",
+    humidity: "62%",
+    rainfallProbability: "30% (Moderate)",
+    riskLevel: "MODERATE RISK",
+    riskBadgeClass: "badge-storage",
+    advisory: "Moderate temperatures in Varanasi. Ensure farm-gate pickups are shaded from direct solar exposure."
+  }
+};
+
+// Multi-District Cold Storage Network
 const ALL_COLD_STORAGES = [
   // --- Punjab ---
   {
@@ -149,7 +201,7 @@ lots.push(
 
 // ================= API ROUTES =================
 
-// 1. Authentication (Simulated OTP)
+// 1. Authentication
 app.post('/api/auth/send-otp', (req, res) => {
   const { phone } = req.body;
   if (!phone || phone.length !== 10) {
@@ -165,21 +217,46 @@ app.post('/api/auth/verify-otp', (req, res) => {
   }
   let existing = users.find(u => u.phone === phone);
   if (!existing) {
+    const finalState = state || "West Bengal";
+    const finalDistrict = district || "Jalpaiguri";
     existing = {
-      id: `${(role || 'FARMER').toUpperCase().slice(0, 4)}-${(state || 'IN').slice(0, 2).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `${(role || 'FARMER').toUpperCase().slice(0, 4)}-${finalState.slice(0, 2).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
       name: name || "Verified Producer",
       phone,
       role: role || "Farmer",
-      state: state || "Punjab",
-      district: district || "Amritsar",
-      location: `${district || 'Amritsar'}, ${state || 'Punjab'}`
+      state: finalState,
+      district: finalDistrict,
+      location: `${finalDistrict}, ${finalState}`
     };
     users.push(existing);
   }
   res.json({ success: true, user: existing });
 });
 
-// 2. Proximity Radar (Storages & Buyers)
+// 2. Weather Advisory
+app.get('/api/advisory/weather', (req, res) => {
+  const district = req.query.district || "Jalpaiguri";
+  const matched = DISTRICT_WEATHER_DATA[district] || {
+    temperature: "28°C",
+    humidity: "75%",
+    rainfallProbability: "50%",
+    riskLevel: "MODERATE RISK",
+    riskBadgeClass: "badge-storage",
+    advisory: `Standard regional climate patterns observed in ${district}. Follow certified storage procedures.`
+  };
+
+  res.json({
+    district,
+    temperature: matched.temperature,
+    humidity: matched.humidity,
+    rainfallProbability: matched.rainfallProbability,
+    riskLevel: matched.riskLevel,
+    riskBadgeClass: matched.riskBadgeClass,
+    aiAdvisory: matched.advisory
+  });
+});
+
+// 3. Proximity Radar
 app.get('/api/proximity/storages', (req, res) => {
   const { district, crop } = req.query;
   let results = ALL_COLD_STORAGES;
@@ -218,7 +295,7 @@ app.get('/api/proximity/buyers', (req, res) => {
   res.json(mapped);
 });
 
-// 3. Lots & Trading
+// 4. Lots & Marketplace
 app.get('/api/lots', (req, res) => {
   res.json(lots);
 });
@@ -234,9 +311,9 @@ app.post('/api/lots/create', (req, res) => {
   res.json({ success: true, lot });
 });
 
-// 4. UPI Dynamic QR Generator
+// 5. UPI Escrow Generation
 app.post('/api/payments/generate-upi-qr', async (req, res) => {
-  const { amount, lotId, buyerName } = req.body;
+  const { amount, lotId } = req.body;
   const vpa = "upajtantram.escrow@rbi-nodal";
   const upiIntent = `upi://pay?pa=${vpa}&pn=UpajTantramEscrow&am=${amount}&cu=INR&tn=Lot_${lotId}`;
   
@@ -265,18 +342,6 @@ app.post('/api/trade/escrow-lock', (req, res) => {
   };
   transactions.push(tx);
   res.json({ success: true, transaction: tx });
-});
-
-// 5. Weather Advisory & Telemetry
-app.get('/api/advisory/weather', (req, res) => {
-  const district = req.query.district || "Amritsar";
-  res.json({
-    district,
-    temperature: "28°C",
-    humidity: "82%",
-    rainfallProbability: "70%",
-    aiAdvisory: `Monsoon humidity advisory in ${district}. Open storage risks fungal decay. Shift produce to cold storage or lock sales.`
-  });
 });
 
 // 6. FPO Pooling
@@ -309,7 +374,7 @@ app.post('/api/fpo/contribute', (req, res) => {
   res.json({ success: true, pool: target });
 });
 
-// 7. Logistics & Finance
+// 7. Logistics, Finance, Disputes
 app.post('/api/logistics/book', (req, res) => {
   const km = Number(req.body.distanceKm) || 40;
   const v = req.body.vehicleType || "Pickup (1.5T)";
@@ -376,13 +441,13 @@ app.get('/api/schemes', (req, res) => {
 app.post('/api/ai/chat', (req, res) => {
   const { message, lang, userDistrict } = req.body;
   const clean = (message || "").toLowerCase();
-  let reply = `In ${userDistrict || 'your area'}, market modal rates remain resilient. High humidity suggests keeping perishable lots in cold storage.`;
+  let reply = `In ${userDistrict || 'your area'}, market modal rates remain resilient. Weather advisories recommend moving perishables into accredited cold storage.`;
   let detectedLang = lang || 'en';
 
   if (clean.includes("storage") || clean.includes("হিমাগার") || clean.includes("कोल्ड")) {
     reply = `Nearby accredited storage facilities have verified vacancies. You can sanction up to 70% e-NWR credit against deposited commodities.`;
   } else if (clean.includes("rate") || clean.includes("price") || clean.includes("দাম") || clean.includes("भाव")) {
-    reply = `Modal rates for Potato stand around ₹1,450-₹1,620/Qtl, Tomato around ₹2,450/Qtl, and Rice around ₹1,680-₹3,100/Qtl depending on assayed grade.`;
+    reply = `Modal rates for Potato stand around ₹1,450-₹1,620/Qtl, Tomato around ₹2,450/Qtl, and Rice around ₹1,680-₹3,100/Qtl.`;
   }
 
   if (lang === 'bn' || /[\u0980-\u09FF]/.test(clean)) {
